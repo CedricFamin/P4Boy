@@ -4,11 +4,15 @@
 #include "AddressAction.h"
 #include "CPU.h"
 
+#include "imgui.h"
+#include "imgui-SFML.h"
+
 
 namespace P4Boy
 {
 	LCD::LCD() : _window(sf::VideoMode(160, 144), "SFML works!"), _mainBus(nullptr)
 	{
+		ImGui::SFML::Init(_window);
 	}
 	
 	void LCD::ConnectAddressRange(MainBus& mainBus)
@@ -154,9 +158,14 @@ namespace P4Boy
 					_window.clear({ 0x08, 0x18, 0x28 });
 					DrawBackground();
 					DrawSprites();
+					ImGui::SFML::Update(_window, _deltaClock.restart());
+					ImGui::Begin("Hello, world!");
+					ImGui::Button("Look at this pretty button");
+					ImGui::End();
+					ImGui::SFML::Render(_window);
 					_window.display();
 					sf::Event event;
-					while (_window.pollEvent(event)) {}
+					while (_window.pollEvent(event)) { ImGui::SFML::ProcessEvent(_window, event); }
 				}
 				else _LCDS.Mode = 2;
 
