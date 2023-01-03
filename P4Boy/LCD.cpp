@@ -4,34 +4,30 @@
 #include "AddressAction.h"
 #include "CPU.h"
 
-#include "imgui.h"
-#include "imgui-SFML.h"
-
 
 namespace P4Boy
 {
 	LCD::LCD() : _window(sf::VideoMode(160, 144), "SFML works!"), _mainBus(nullptr)
 	{
-		ImGui::SFML::Init(_window);
 	}
 	
 	void LCD::ConnectAddressRange(MainBus& mainBus)
 	{
-		mainBus.AddSingle(0xFF40, new AddressAction_DirectValue<LCDC>(this->_LCDC));
-		mainBus.AddSingle(0xFF41, new AddressAction_DirectValue<LCDS>(this->_LCDS));
+		mainBus.AddSingle(0xFF40, new AddressAction_DirectValue<LCDC>(this->_LCDC), "LCDC");
+		mainBus.AddSingle(0xFF41, new AddressAction_DirectValue<LCDS>(this->_LCDS), "LCDS");
 
-		mainBus.AddSingle(0xFF44, new AddressAction_DirectValue<uint8_t>(this->_LY));
-		mainBus.AddSingle(0xFF45, new AddressAction_DirectValue<uint8_t>(this->_LYC));
+		mainBus.AddSingle(0xFF44, new AddressAction_DirectValue<uint8_t>(this->_LY), "LY");
+		mainBus.AddSingle(0xFF45, new AddressAction_DirectValue<uint8_t>(this->_LYC), "LYC");
 
-		mainBus.AddSingle(0xFF42, new AddressAction_DirectValue<uint8_t>(this->_SCY));
-		mainBus.AddSingle(0xFF43, new AddressAction_DirectValue<uint8_t>(this->_SCX));
+		mainBus.AddSingle(0xFF42, new AddressAction_DirectValue<uint8_t>(this->_SCY), "SCY");
+		mainBus.AddSingle(0xFF43, new AddressAction_DirectValue<uint8_t>(this->_SCX), "SCX");
 
-		mainBus.AddSingle(0xFF4A, new AddressAction_DirectValue<uint8_t>(this->_WY));
-		mainBus.AddSingle(0xFF4B, new AddressAction_DirectValue<uint8_t>(this->_WX));
+		mainBus.AddSingle(0xFF4A, new AddressAction_DirectValue<uint8_t>(this->_WY), "WY");
+		mainBus.AddSingle(0xFF4B, new AddressAction_DirectValue<uint8_t>(this->_WX), "WX");
 
-		mainBus.AddSingle(0xFF47, new AddressAction_DirectValue<BGP>(this->_BGP));
-		mainBus.AddSingle(0xFF48, new AddressAction_DirectValue<OBP>(this->_OBP0));
-		mainBus.AddSingle(0xFF49, new AddressAction_DirectValue<OBP>(this->_OBP1));
+		mainBus.AddSingle(0xFF47, new AddressAction_DirectValue<BGP>(this->_BGP), "BGP");
+		mainBus.AddSingle(0xFF48, new AddressAction_DirectValue<OBP>(this->_OBP0), "OBP0");
+		mainBus.AddSingle(0xFF49, new AddressAction_DirectValue<OBP>(this->_OBP1), "OBP1");
 		_mainBus = &mainBus;
 	}
 
@@ -158,14 +154,9 @@ namespace P4Boy
 					_window.clear({ 0x08, 0x18, 0x28 });
 					DrawBackground();
 					DrawSprites();
-					ImGui::SFML::Update(_window, _deltaClock.restart());
-					ImGui::Begin("Hello, world!");
-					ImGui::Button("Look at this pretty button");
-					ImGui::End();
-					ImGui::SFML::Render(_window);
 					_window.display();
 					sf::Event event;
-					while (_window.pollEvent(event)) { ImGui::SFML::ProcessEvent(_window, event); }
+					while (_window.pollEvent(event)) { }
 				}
 				else _LCDS.Mode = 2;
 

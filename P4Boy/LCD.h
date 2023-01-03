@@ -122,6 +122,7 @@ namespace P4Boy
 	{
 	public:
 		typedef Ptr<LCD> ptr;
+		typedef std::shared_ptr<LCD> shared_ptr;
 
 		LCD();
 	public:

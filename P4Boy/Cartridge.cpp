@@ -11,7 +11,7 @@ namespace P4Boy
 	class AddressAction_Cartridge : public AddressAction
 	{
 	public:
-		AddressAction_Cartridge(Cartridge::ptr::shared cartridge, Cartridge::ptr::shared bootRom)
+		AddressAction_Cartridge(Cartridge::shared_ptr cartridge, Cartridge::shared_ptr bootRom)
 			: _cartridge(cartridge)
 			, _bootRom(bootRom)
 		{
@@ -32,8 +32,8 @@ namespace P4Boy
 		}
 		virtual void Set(Address addr, uint8_t) { }
 	private:
-		Cartridge::ptr::shared _cartridge;
-		Cartridge::ptr::shared _bootRom;
+		Cartridge::shared_ptr _cartridge;
+		Cartridge::shared_ptr _bootRom;
 	};
 
 	void Cartridge::LoadRom(char const* romPath)
@@ -43,17 +43,17 @@ namespace P4Boy
 		_romCode = std::vector<unsigned char>(std::istreambuf_iterator<char>(input), {});
 	}
 
-	void Cartridge::ConnectAddressRange(Cartridge::ptr::shared& bootRom, MainBus& mainBus)
+	void Cartridge::ConnectAddressRange(Cartridge::shared_ptr& bootRom, MainBus& mainBus)
 	{
 		auto bootRomEnabler = new AddressAction_SingleAction([this, bootRom](Address addr, uint8_t value)
 		{
 			this->SetBootRomEnabled(!(value != 0));
 			bootRom->SetBootRomEnabled(!(value != 0));
 		});
-		auto readRom = new AddressAction_Cartridge(Cartridge::ptr::shared(this), bootRom);
+		auto readRom = new AddressAction_Cartridge(Cartridge::shared_ptr(this), bootRom);
 
-		mainBus.AddRange(AddressSingle(0xFF50, bootRomEnabler));
-		mainBus.AddRange(new AddressRange(0x0000, 0x7FFF, readRom));
+		mainBus.AddSingle(0xFF50, bootRomEnabler, "Boot Rom Enabler");
+		mainBus.AddRange(0x0000, 0x7FFF, readRom, "Cartridge");
 	}
 
 	uint8_t Cartridge::Read(Address addr) const

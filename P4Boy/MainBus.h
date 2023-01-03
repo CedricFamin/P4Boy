@@ -24,8 +24,10 @@ namespace P4Boy
 		inline void Set_16b(Address addr, uint16_t value) { GetRange(addr)->Set_16b(addr, value); }
 
 		void AddRange(AddressRange* range, uint8_t priority = 1);
-		void AddRange(Address from, Address to, AddressAction* action, uint8_t priority = 1);
-		void AddSingle(Address addr, AddressAction* action, uint8_t priority = 1);
+		void AddRange(Address from, Address to, AddressAction* action, std::string const & name, uint8_t priority = 1);
+		void AddSingle(Address addr, AddressAction* action, std::string const & name, uint8_t priority = 1);
+
+		std::vector<std::shared_ptr<AddressRange>>& Ranges() { return _allRanges; }
 	protected:
 	private:
 		std::vector<std::shared_ptr<AddressRange>> _allRanges;

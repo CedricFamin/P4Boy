@@ -7,6 +7,7 @@ namespace P4Boy
 	{
 	public:
 		typedef Ptr<Sound> ptr;
+		typedef std::shared_ptr<Sound> shared_ptr;
 
 	public:
 	protected:

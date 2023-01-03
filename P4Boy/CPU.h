@@ -90,6 +90,9 @@ namespace P4Boy
 	class CPU
 	{
 	public:
+		typedef Ptr<CPU> ptr;
+		typedef std::shared_ptr<CPU> shared_ptr;
+	public:
 		CPU();
 		void Tick();
 		void ExecuteNextOpcode();
@@ -110,6 +113,8 @@ namespace P4Boy
 
 		void ConnectAddressRange(MainBus& mainBus);
 		inline MainBus& Memory() { return *_mainBus; }
+
+		std::atomic_bool debugShowInstructions;
 	protected:
 	private:
 		bool _interruptQueued = false;

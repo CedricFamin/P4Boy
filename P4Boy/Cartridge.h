@@ -12,6 +12,7 @@ namespace P4Boy
 	{
 	public:
 		typedef Ptr<Cartridge> ptr;
+		typedef std::shared_ptr<Cartridge> shared_ptr;
 	public:
 		Cartridge() : _bootRomEnabled(true) {}
 		
@@ -19,7 +20,7 @@ namespace P4Boy
 		bool IsBootRomEnabled() { return _bootRomEnabled; }
 
 		void LoadRom(char const* romPath);
-		void ConnectAddressRange(Cartridge::ptr::shared& bootRom, MainBus& mainBus);
+		void ConnectAddressRange(Cartridge::shared_ptr& bootRom, MainBus& mainBus);
 
 		uint8_t Read(Address addr) const;
 	protected:

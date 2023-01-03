@@ -2,6 +2,7 @@
 
 #include <cassert>
 
+#include "Utility.h"
 #include "MainBus.h"
 #include "AddressRange.h"
 
@@ -11,6 +12,7 @@ namespace P4Boy
 	{
 	public:
 		typedef Ptr<Motherboard> ptr;
+		typedef std::shared_ptr<Motherboard> shared_ptr;
 	public:
 		void Tick();
 

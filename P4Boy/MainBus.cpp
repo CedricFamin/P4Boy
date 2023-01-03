@@ -27,13 +27,13 @@ namespace P4Boy
 
 	}
 
-	void MainBus::AddRange(Address from, Address to, AddressAction* action, uint8_t priority)
+	void MainBus::AddRange(Address from, Address to, AddressAction* action, std::string const & name, uint8_t priority)
 	{
-		AddRange(new AddressRange(from, to, action), priority);
+		AddRange(new AddressRange(from, to, action, name), priority);
 	}
 
-	void MainBus::AddSingle(Address addr, AddressAction* action, uint8_t priority)
+	void MainBus::AddSingle(Address addr, AddressAction* action, std::string const & name, uint8_t priority)
 	{
-		AddRange(addr, addr, action, priority);
+		AddRange(addr, addr, action, name, priority);
 	}
 }

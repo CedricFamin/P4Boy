@@ -3,10 +3,14 @@
 #include <chrono>
 #include <thread>
 
+#include "Utility.h"
+
 namespace P4Boy
 {
     class Clock
     {
+    public:
+        typedef std::shared_ptr<Clock> shared_ptr;
     public:
         Clock(std::chrono::nanoseconds const& tickDuration);
 

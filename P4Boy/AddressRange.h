@@ -1,4 +1,7 @@
 #pragma once
+
+#include <string>
+
 #include "Utility.h"
 #include "AddressAction.h"
 
@@ -7,10 +10,11 @@ namespace P4Boy
 	class AddressRange
 	{
 	public:
-		AddressRange(Address from, Address to, AddressAction* action)
+		AddressRange(Address from, Address to, AddressAction* action, std::string const & name)
 			: _memRangeFrom(from)
 			, _memRangeTo(to)
 			, _action(action)
+			, _name(name)
 
 		{
 
@@ -31,15 +35,14 @@ namespace P4Boy
 
 		inline uint8_t Priority() const { return _priority; }
 		inline void SetPriority(uint8_t v) { _priority = v; }
+
+		inline std::string const& Name() { return _name; }
 	private:
 		Address _memRangeFrom;
 		Address _memRangeTo;
-		AddressAction::ptr::shared _action;
+		AddressAction::shared_ptr _action;
 		uint8_t _priority = 1;
+		std::string _name;
 	};
-
-	inline AddressRange* AddressSingle(Address addr, AddressAction* action) {
-		return new AddressRange(addr, addr, action);
-	}
 }
 

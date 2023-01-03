@@ -43,7 +43,7 @@ namespace P4Boy
 			[this](Address addr) -> uint8_t
 			{
 				return *this->_joypadState;
-			}));
+			}), "Joypad");
 	}
 
 

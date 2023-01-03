@@ -11,6 +11,7 @@ namespace P4Boy
 	{
 	public:
 		typedef Ptr<AddressAction> ptr;
+		typedef std::shared_ptr<AddressAction> shared_ptr;
 	public:
 		virtual ~AddressAction() {}
 		virtual uint8_t Get(Address addr) { return const_cast<const AddressAction*>(this)->Get(addr); }
@@ -37,8 +38,8 @@ namespace P4Boy
 		virtual uint8_t Get(Address addr) const { return _getFunc(addr); }
 		virtual void Set(Address addr, uint8_t value) { _setFunc(addr, value); }
 	private:
-		SetFunction _setFunc;
-		GetFunction _getFunc;
+		SetFunction _setFunc = [](Address, uint8_t) {};
+		GetFunction _getFunc = [](Address) -> uint8_t { return 0xFF;};
 	};
 
 	template<typename valueType>

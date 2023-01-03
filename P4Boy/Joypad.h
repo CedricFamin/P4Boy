@@ -14,6 +14,7 @@ namespace P4Boy
 	{
 	public:
 		typedef Ptr<Joypad> ptr;
+		typedef std::shared_ptr<Joypad> shared_ptr;
 
 		Joypad();
 		void ConnectAddressRange(MainBus& mainBus);

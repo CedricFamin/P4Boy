@@ -31,8 +31,8 @@ namespace P4Boy
 	{
 		_mainBus = &mainBus;
 
-		_mainBus->AddSingle(0xFFFF, new AddressAction_DirectValue<Register_Interrupt>(InterruptEnableRegister));
-		_mainBus->AddSingle(0xFF0F, new AddressAction_DirectValue<Register_Interrupt>(InterruptRequestRegister));
+		_mainBus->AddSingle(0xFFFF, new AddressAction_DirectValue<Register_Interrupt>(InterruptEnableRegister), "Interrupt Enable Register");
+		_mainBus->AddSingle(0xFF0F, new AddressAction_DirectValue<Register_Interrupt>(InterruptRequestRegister), "Interrupt Request Register");
 	}
 
 	void CPU::ExecuteNextOpcode()
@@ -57,7 +57,7 @@ namespace P4Boy
 		}
 
 		if (!instruction.execute) assert(false);
-		if (false)
+		if (debugShowInstructions)
 		{
 			std::cout << "0x" << std::setfill('0') << std::setw(5) << std::hex << PC;
 			std::cout << " (0x" << std::setfill('0') << std::setw(3) << std::hex << opCode << ")";
