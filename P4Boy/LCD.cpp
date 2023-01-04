@@ -123,6 +123,7 @@ namespace P4Boy
 		static uint32_t MODE_TIMING[] = { 85, 456, 80, 291 };
 		static uint32_t nextTickUpdate = 0;
 
+		Register_Interrupt requestInterrupt = 0;
 		if (nextTickUpdate == 0)
 		{
 			_LYC = _LY;
@@ -146,9 +147,7 @@ namespace P4Boy
 				{
 					_LCDS.Mode = 1;
 
-					Register_Interrupt interruptFlag = _mainBus->Get_8b(0xFF0F);
-					interruptFlag.VBlank = 0x1;
-					_mainBus->Set_8b(0xFF0F, interruptFlag);
+					requestInterrupt.VBlank = 1;
 					_LCDS.VblankInterruptSource = 1;
 
 					_window.clear({ 0x08, 0x18, 0x28 });
@@ -176,6 +175,7 @@ namespace P4Boy
 			nextTickUpdate = MODE_TIMING[currentMode] / 2;
 		}
 
+		if (requestInterrupt > 0) Register_Interrupt::MergeRequestInterrupt(*_mainBus, requestInterrupt);
 		nextTickUpdate -= 1;
 	}
 }

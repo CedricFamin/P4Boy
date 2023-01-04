@@ -75,6 +75,12 @@ namespace P4Boy
 		* Bit 4 : Joypad   Interrupt Request(INT $60)  (1 = Request)
 		*/
 	public:
+		static constexpr Address const REGISTER_REQUEST_INTERRUPT = 0xFF0F;
+		static constexpr Address const REGISTER_ENABLE_INTERRUPT = 0xFFFF;
+
+		static void MergeEnableInterrupt(MainBus& mainBus, Register_Interrupt const & r);
+		static void MergeRequestInterrupt(MainBus& mainBus, Register_Interrupt const& r);
+	public:
 		Register_Interrupt() : VBlank(*this, 0), LCDStat(*this, 1), Timer(*this, 2), Serial(*this, 3), Joypad(*this, 4) {}
 		Register_Interrupt(uint8_t v) : VBlank(*this, 0), LCDStat(*this, 1), Timer(*this, 2), Serial(*this, 3), Joypad(*this, 4) { _value = v;}
 

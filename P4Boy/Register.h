@@ -10,7 +10,7 @@ namespace P4Boy
 		public:
 			typedef _valueType valueType;
 			inline operator valueType() { return Get(); }
-			valueType Get() { return reinterpret_cast<_registerType*>(this)->Get(); }
+			valueType Get() const { return reinterpret_cast<_registerType const*>(this)->Get(); }
 	};
 
 	template<typename numberType>
@@ -20,7 +20,7 @@ namespace P4Boy
 		inline Register_generic() : _value(0) {}
 
 		inline Register_generic& operator=(numberType value) { _value = value; return *this; }
-		numberType Get() { return _value; };
+		numberType Get() const { return _value; };
 
 	protected:
 		numberType _value;
@@ -39,7 +39,7 @@ namespace P4Boy
 			inline uint8_t High() const { return _value >> 8; }
 			inline uint8_t Low() const { return _value & 0xFF; }
 
-			uint16_t Get() { return _value; };
+			uint16_t Get() const { return _value; };
 
 		protected:
 			uint16_t _value;
@@ -50,7 +50,7 @@ namespace P4Boy
 	public:
 		SubRegister_8b_Low(Register_16b& parent) : _register(parent) {}
 		inline SubRegister_8b_Low& operator=(uint16_t value) { _register = (_register & 0xFF00) | value; return *this; };
-		uint8_t Get() { return _register.Low(); };
+		uint8_t Get() const { return _register.Low(); };
 	private:
 		Register_16b& _register;
 	};
@@ -60,7 +60,7 @@ namespace P4Boy
 		public:
 			SubRegister_8b_High(Register_16b& parent) : _register(parent) {}
 			inline SubRegister_8b_High& operator=(uint16_t value) { _register = (_register & 0x00FF) | (value << 8); return *this; }
-			uint8_t Get() { return _register.High(); }
+			uint8_t Get() const { return _register.High(); }
 		private:
 			Register_16b& _register;
 	};
@@ -72,7 +72,7 @@ namespace P4Boy
 		public:
 			SubRegister_1b(parent_register& parent, char bitShift) : _register(parent), _bitShift(bitShift) {}
 			inline SubRegister_1b& operator=(parent_vtype value) { value <<= _bitShift; _register = (_register & ~parent_vtype(1 << _bitShift)) | value; return *this; }
-			bool Get() { return (_register.Get() >> _bitShift) & 0x1; }
+			bool Get() const { return (_register.Get() >> _bitShift) & 0x1; }
 		private:
 			parent_register& _register;
 			char _bitShift;
@@ -85,7 +85,7 @@ namespace P4Boy
 	public:
 		SubRegister_2b(parent_register& parent, char bitShift) : _register(parent), _bitShift(bitShift), _mask(~parent_vtype(0b11 << _bitShift)) {}
 		inline SubRegister_2b& operator=(parent_vtype value) { value <<= _bitShift; _register = (_register & _mask) | value; return *this; }
-		uint8_t Get() { return (_register.Get() >> _bitShift) & 0b11; }
+		uint8_t Get() const { return (_register.Get() >> _bitShift) & 0b11; }
 	private:
 		parent_register& _register;
 		char _bitShift;

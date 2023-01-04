@@ -10,6 +10,20 @@
 
 namespace P4Boy
 {
+	void Register_Interrupt::MergeEnableInterrupt(MainBus& mainBus, Register_Interrupt const& r)
+	{
+		auto memory(mainBus.Get_8b(REGISTER_ENABLE_INTERRUPT));
+		memory = memory | r.Get();
+		mainBus.Set_8b(REGISTER_ENABLE_INTERRUPT, memory);
+	}
+
+	void Register_Interrupt::MergeRequestInterrupt(MainBus& mainBus, Register_Interrupt const& r)
+	{
+		auto memory(mainBus.Get_8b(REGISTER_REQUEST_INTERRUPT));
+		memory = memory | r.Get();
+		mainBus.Set_8b(REGISTER_REQUEST_INTERRUPT, memory);
+	}
+
 	CPU::CPU() : _mainBus(nullptr)
 	{
 		_instructionManager.ReadInstruction("Opcodes.json");
