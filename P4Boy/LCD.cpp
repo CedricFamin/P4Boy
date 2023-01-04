@@ -45,24 +45,21 @@ namespace P4Boy
 				for (uint8_t x = 0; x < 32; ++x)
 				{
 					uint8_t tileIndex = _mainBus->Get_8b(time_map_addr + x + y * 32);
-					if (tileIndex)
+					if (!tileIndex)
+						continue;
+					uint16_t tileAddr = tile_data_addr + tileIndex * 16;
+					for (uint8_t y_tile = 0; y_tile < 8; ++y_tile)
 					{
-						uint16_t tileAddr = tile_data_addr + tileIndex * 16;
-						for (uint8_t y_tile = 0; y_tile < 8; ++y_tile)
+						uint8_t pixels1 = _mainBus->Get_8b(tileAddr + (y_tile * 2));
+						uint8_t pixels2 = _mainBus->Get_8b(tileAddr + (y_tile * 2 + 1));
+						for (uint8_t x_tile = 0; x_tile <= 8; ++x_tile)
 						{
-							uint8_t pixels1 = _mainBus->Get_8b(tileAddr + (y_tile * 2));
-							uint8_t pixels2 = _mainBus->Get_8b(tileAddr + (y_tile * 2 + 1));
-							for (uint8_t x_tile = 0; x_tile <= 8; ++x_tile)
-							{
-								uint8_t color = ((pixels1 >> (7 - x_tile)) & 1) | (((pixels2 >> (7 - x_tile)) & 1) << 1);
-								int coordX = x * 8 + x_tile - _SCX;
-								int coordY = y * 8 + y_tile - _SCY;
-								if (coordX >= 0 && coordX <= 160 && coordY >= 0 && coordY <= 144)
-								{
-									vertex.append(sf::Vertex(sf::Vector2f(coordX, coordY), colors[color]));
-
-								}
-							}
+							uint8_t color = ((pixels1 >> (7 - x_tile)) & 1) | (((pixels2 >> (7 - x_tile)) & 1) << 1);
+							int coordX = x * 8 + x_tile - _SCX;
+							int coordY = y * 8 + y_tile - _SCY;
+							if (!(coordX >= 0 && coordX <= 160 && coordY >= 0 && coordY <= 144))
+								continue;
+							vertex.append(sf::Vertex(sf::Vector2f(coordX, coordY), colors[color]));
 						}
 					}
 				}
