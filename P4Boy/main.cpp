@@ -28,7 +28,7 @@ void P4Boy_Loop(P4Boy::P4Boy & p4boy)
         if (tick == 150000)
         {
             auto current_date = std::chrono::high_resolution_clock::now();
-            std::cout << "Megahertz: " << (tick * 1000.0f / (std::chrono::duration_cast<std::chrono::nanoseconds>(current_date - on_date).count())) << '\n';
+            //std::cout << "Megahertz: " << (tick * 1000.0f / (std::chrono::duration_cast<std::chrono::nanoseconds>(current_date - on_date).count())) << '\n';
             on_date = std::chrono::high_resolution_clock::now();
             tick = 0;
         }
@@ -169,15 +169,24 @@ int main()
     auto p4boy = P4Boy::P4Boy();
     std::thread p4BoyLoop(std::bind(P4Boy_Loop, p4boy));
 
-    // passed
-    //p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/01-special.gb");
-
-    //p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/03-op sp,hl.gb");
-
+    // Passed
+    // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/01-special.gb");
+    // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/03-op sp,hl.gb");
+    // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/04-op r,imm.gb");
+    // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/05-op rp.gb");
+    // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/06-ld r,r.gb");
+    // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/07-jr,jp,call,ret,rst.gb");
+    // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/08-misc instrs.gb");
+    // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/09-op r,r.gb");
+    // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/10-bit ops.gb");
     // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/11-op a,(hl).gb");
-    // 
 
-    p4boy.LoadRom("Roms/Tetris.gb");
+    // Todo
+    // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/02-interrupts.gb");
+    
+
+
+    // p4boy.LoadRom("Roms/Tetris.gb");
 
     sf::RenderWindow window(sf::VideoMode(640, 480), "P4Boy - Tools");
     window.setFramerateLimit(60);

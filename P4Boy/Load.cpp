@@ -1,4 +1,6 @@
 #include "RegisterInstruction.h"
+#include <iostream>
+#include <iomanip>
 
 namespace P4Boy
 {
@@ -67,6 +69,23 @@ namespace P4Boy
 
 		// LD (X), A (8 bit), address + 0xFF
 		manager.RegisterExecute({ 0xE0, 0xE2 }, load_to_8b_around_0xFF00);
+
+		// Add the 8 - bit signed operand s8(values - 128 to + 127) to the stack pointer SP, and store the result in register pair HL.
+		manager.RegisterExecute({ 0xF8 }, 
+			[](CPU& cpu, CPUInstruction const& instr, uint16_t v) -> uint8_t
+			{
+				int8_t sv = (uint8_t(v) ^ 0x80) - 0x80;
+				uint16_t r = cpu.SP + sv;
+				//std::cout << "0xF8 " << std::hex << cpu.SP << " " << int32_t(sv) << std::endl;
+				//std::cout << "h:" << CheckHalfCarryFlag_16b(cpu.SP, sv) << " c:" << ((r > 0xFFFF) | (r < 0)) << std::endl;
+				cpu.HL = r;
+				
+				cpu.AF.z = 0;
+				cpu.AF.n = 0;
+				cpu.AF.h = (r & 0xF) < (cpu.SP & 0xF);
+				cpu.AF.c = (r & 0xFF) < (cpu.SP & 0xFF);
+				return instr.cycles[0];
+			});
 
 		return true;
 	}

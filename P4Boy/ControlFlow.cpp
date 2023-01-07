@@ -161,7 +161,7 @@ namespace P4Boy
 				cpu.AF.z = r == 0;
 				cpu.AF.n = 1;
 				cpu.AF.c = r < 0;
-				cpu.AF.h = CheckHalfCarryFlag(v1, -v2);
+				cpu.AF.h = CheckHalfCarryFlag_8b(v1, -v2);
 				return instr.cycles[0]; 
 			});
 

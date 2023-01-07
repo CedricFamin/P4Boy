@@ -243,6 +243,21 @@ namespace P4Boy
 				return instr.cycles[0];
 			});
 
+		// RLC X
+		manager.RegisterExecute({ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 }, true,
+			[](CPU& cpu, CPUInstruction const& instr, uint16_t v) -> uint8_t
+			{
+				uint8_t t = GetValue_8b(cpu, instr.operands.front(), v);
+				uint8_t c = (t >> 7) & 0x1;
+				t = (t << 1) | c;
+				cpu.AF.c = c;
+				cpu.AF.z = (t & 0xFF) == 0;
+				cpu.AF.h = 0;
+				cpu.AF.n = 0;
+				SetValue_8b(cpu, instr.operands.front(), t & 0xFF);
+				return instr.cycles[0];
+			});
+
 		// RRC X
 		manager.RegisterExecute({ 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F }, true,
 			[](CPU& cpu, CPUInstruction const & instr, uint16_t v) -> uint8_t
@@ -327,6 +342,19 @@ namespace P4Boy
 			[](CPU& cpu, CPUInstruction const& instr, uint16_t v) -> uint8_t { return res_generic(cpu, instr, v, 6); });
 		manager.RegisterExecute({ 0xB8, 0xB9, 0xBA, 0xBB, 0xBC, 0xBD, 0xBE, 0xBF }, true,
 			[](CPU& cpu, CPUInstruction const& instr, uint16_t v) -> uint8_t { return res_generic(cpu, instr, v, 7); });
+
+		// SRA X
+		manager.RegisterExecute({ 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F }, true,
+			[](CPU& cpu, CPUInstruction const& instr, uint16_t v) -> uint8_t {
+				uint8_t v1 = GetValue_8b(cpu, instr.operands.back(), v);
+				cpu.AF.c = v1 & 0x1;
+				v1 = (v1 >> 1) | (v1 & 0x1 << 7);
+				cpu.AF.z = v1 == 0;
+				cpu.AF.n = 0;
+				cpu.AF.h = 0;
+				SetValue_8b(cpu, instr.operands.back(), v, v1);
+				return instr.cycles[0];
+			});
 
 		// SLA X
 		manager.RegisterExecute({ 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27 }, true,

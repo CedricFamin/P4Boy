@@ -124,8 +124,9 @@ namespace P4Boy
 	protected:
 	private:
 		bool _interruptQueued = false;
-		MainBus* _mainBus;
+		MainBus* _mainBus = nullptr;
 		CPUIntructionManager _instructionManager;
+		uint8_t _nextInstructionCycle = 0;
 	};
 }
 

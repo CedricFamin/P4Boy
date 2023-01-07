@@ -13,18 +13,18 @@ namespace P4Boy
 	void SetValue_16b(CPU& cpu, CPUInstruction::Operand const& operand, uint16_t addr, uint16_t v);
 	void SetValue_16b(CPU& cpu, CPUInstruction::Operand const& operand, uint16_t v);
 
-	inline bool CheckHalfCarryFlag(uint8_t v1, int16_t v2)
+	inline bool CheckHalfCarryFlag_8b(uint8_t v1, int16_t v2)
 	{
-		if (v2 > 0)
+		if (v2 >= 0)
 			return (((int16_t(v1) & 0xF) + (v2 & 0xF)) & 0x10) == 0x10;
 		return (((int16_t(v1) & 0xF) - (-v2 & 0xF)) < 0x0);
 	}
 
-	inline bool CheckHalfCarryFlag(uint16_t v1, int16_t v2)
+	inline bool CheckHalfCarryFlag_16b(uint16_t v1, int32_t v2)
 	{
-		if (v2 > 0)
+		if (v2 >= 0)
 			return (((v1 & 0xFFF) + (v2 & 0xFFF)) & 0x1000) == 0x1000;
-		return (((int32_t(v1) & 0xFF) - (-int32_t(v2) & 0xFF)) < 0x0);
+		return (((uint16_t(v1) & 0xFFF) - (uint16_t(-v2) & 0xFFF)) == 0xF0);
 	}
 
 	//

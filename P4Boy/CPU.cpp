@@ -89,6 +89,7 @@ namespace P4Boy
 		}
 		previousPC = PC;
 		uint8_t cyles = instruction.execute(*this, instruction, value);
+		_nextInstructionCycle = cyles;
 	}
 
 	bool CPU::ExecuteInterrupt(Address addr)
@@ -144,6 +145,11 @@ namespace P4Boy
 
 	void CPU::Tick()
 	{
+		if (_nextInstructionCycle > 0)
+		{
+			--_nextInstructionCycle;
+			return;
+		}
 		if (false)
 		{
 			static std::fstream ss("logs.txt", std::fstream::out);

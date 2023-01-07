@@ -8,7 +8,7 @@ namespace P4Boy
 		{
 			uint8_t v1 = GetValue_8b(cpu, instr.operands.front(), v);
 
-			cpu.AF.h = CheckHalfCarryFlag(v1, 1);
+			cpu.AF.h = CheckHalfCarryFlag_8b(v1, 1);
 			v1 += 1;
 			cpu.AF.z = v1 == 0;
 			cpu.AF.n = 0;
@@ -21,7 +21,7 @@ namespace P4Boy
 		{
 			uint8_t v1 = GetValue_8b(cpu, instr.operands.front(), v);
 
-			cpu.AF.h = CheckHalfCarryFlag(v1, -1);
+			cpu.AF.h = CheckHalfCarryFlag_8b(v1, -1);
 			v1 -= 1;
 			cpu.AF.z = v1 == 0;
 			cpu.AF.n = 1;
@@ -70,7 +70,7 @@ namespace P4Boy
 				int16_t r = v1 + v2;
 				cpu.AF.z = (r & 0xFF) == 0;
 				cpu.AF.n = 0;
-				cpu.AF.h = CheckHalfCarryFlag(v1, v2);
+				cpu.AF.h = CheckHalfCarryFlag_8b(v1, v2);
 				cpu.AF.c = (r > 0xFF);
 
 				cpu.AF.A = r & 0xFF;
@@ -88,7 +88,26 @@ namespace P4Boy
 				int16_t r = v1 - v2;
 				cpu.AF.z = (r & 0xFF) == 0;
 				cpu.AF.n = 1;
-				cpu.AF.h = CheckHalfCarryFlag(v1, -v2);
+				cpu.AF.h = CheckHalfCarryFlag_8b(v1, -v2);
+				cpu.AF.c = (r < 0);
+
+				cpu.AF.A = r & 0xFF;
+
+				return instr.cycles[0];
+			});
+
+		// SBC X (8 bit)
+		manager.RegisterExecute({ 0x98, 0x99, 0x9A, 0x9B, 0x9C, 0x9D, 0x9E, 0x9F, 0xDE },
+			[](CPU& cpu, CPUInstruction const& instr, uint16_t v) -> uint8_t
+			{
+				uint8_t v1 = cpu.AF.A;
+				uint8_t v2 = GetValue_8b(cpu, instr.operands[1], v);
+				uint8_t v3 = cpu.AF.c;
+
+				int16_t r = v1 - v2 - v3;
+				cpu.AF.z = (r & 0xFF) == 0;
+				cpu.AF.n = 1;
+				cpu.AF.h = ((v1 & 0xF) < ((v2 & 0xF) + v3));
 				cpu.AF.c = (r < 0);
 
 				cpu.AF.A = r & 0xFF;
@@ -105,7 +124,7 @@ namespace P4Boy
 
 				uint16_t r = v1 + v2;
 				cpu.AF.n = 0;
-				cpu.AF.h = CheckHalfCarryFlag(v1, v2);
+				cpu.AF.h = CheckHalfCarryFlag_16b(v1, v2);
 				cpu.AF.c = (uint32_t(v1 + v2) > 0xFFFF);
 
 				SetValue_16b(cpu, instr.operands.front(), r & 0xFFFF);

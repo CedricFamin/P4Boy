@@ -92,10 +92,10 @@ namespace P4Boy
 	public:
 		BGP() : ColorIdx0(*this, 0), ColorIdx1(*this, 2), ColorIdx2(*this, 4), ColorIdx3(*this, 6) {}
 
-		SubRegister_1b<Register_8b> ColorIdx3;
-		SubRegister_1b<Register_8b> ColorIdx2;
-		SubRegister_1b<Register_8b> ColorIdx1;
-		SubRegister_1b<Register_8b> ColorIdx0;
+		SubRegister_2b<Register_8b> ColorIdx3;
+		SubRegister_2b<Register_8b> ColorIdx2;
+		SubRegister_2b<Register_8b> ColorIdx1;
+		SubRegister_2b<Register_8b> ColorIdx0;
 
 		inline BGP& operator=(uint8_t value) { _value = value; return *this; }
 	};
