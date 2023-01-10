@@ -6,7 +6,7 @@ namespace P4Boy
     class MBCInterface
     {
     public:
-        MBCInterface(Cartridge& cartRidge, Cartridge& bootrom) : cartRidge(cartRidge), bootrom(bootrom) {}
+        MBCInterface(Cartridge& cartRidge, Rom& bootrom) : cartRidge(cartRidge), bootrom(bootrom) {}
         virtual ~MBCInterface() {}
 
         virtual uint8_t read(uint16_t address) = 0;
@@ -19,7 +19,7 @@ namespace P4Boy
         }
     protected:
         Cartridge& cartRidge;
-        Cartridge& bootrom;
+        Rom& bootrom;
 
         bool bootRomEnabled = true;
     };
@@ -27,7 +27,7 @@ namespace P4Boy
     class NoMBC : public MBCInterface
     {
     public:
-        NoMBC(Cartridge& cartRidge, Cartridge& bootrom);
+        NoMBC(Cartridge& cartRidge, Rom& bootrom);
         ~NoMBC();
 
         uint8_t read(uint16_t address);
@@ -38,7 +38,7 @@ namespace P4Boy
     class MBC1 : public MBCInterface
     {
     public:
-        MBC1(Cartridge& cartRidge, Cartridge& bootrom);
+        MBC1(Cartridge& cartRidge, Rom& bootrom);
         ~MBC1();
 
         uint8_t read(uint16_t address);

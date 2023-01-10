@@ -24,7 +24,7 @@ namespace P4Boy
 		Clock::shared_ptr		GetClock() { return _clock; }
 		Motherboard::shared_ptr GetMotherboard() { return _motherboard; }
 		Cartridge::shared_ptr	GetCartridge() { return _cartridge; }
-		Cartridge::shared_ptr	GetBootRom() { return _bootRom; }
+		Rom::shared_ptr			GetBootRom() { return _bootRom; }
 		CPU::shared_ptr			GetCPU() { return _cpu; }
 		Joypad::shared_ptr		GetJoypad() { return _joypad; }
 		Timer::shared_ptr		GetTimer() { return _timer; }
@@ -36,7 +36,7 @@ namespace P4Boy
 		Clock::shared_ptr		_clock;
 		Motherboard::shared_ptr	_motherboard;
 		Cartridge::shared_ptr	_cartridge;
-		Cartridge::shared_ptr	_bootRom;
+		Rom::shared_ptr			_bootRom;
 		CPU::shared_ptr			_cpu;
 		Joypad::shared_ptr		_joypad;
 		Timer::shared_ptr		_timer;

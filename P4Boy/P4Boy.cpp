@@ -7,7 +7,7 @@ namespace P4Boy
 		_clock       = std::unique_ptr<Clock>(new Clock(std::chrono::nanoseconds(238)));
 
 		_cartridge   = Cartridge::shared_ptr(new Cartridge());
-		_bootRom     = Cartridge::shared_ptr(new Cartridge());
+		_bootRom     = Rom::shared_ptr(new Rom());
 		_cpu         = CPU::shared_ptr(new CPU());
 		_motherboard = Motherboard::shared_ptr(new Motherboard());
 		_joypad      = Joypad::shared_ptr(new Joypad());
@@ -39,6 +39,5 @@ namespace P4Boy
 	void P4Boy::LoadRom(char const * romPath)
 	{
 		_cartridge->LoadRom(romPath);
-		_cartridge->SetupMBC();
 	}
 }

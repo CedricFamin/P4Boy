@@ -2,7 +2,7 @@
 
 namespace P4Boy
 {
-    NoMBC::NoMBC(Cartridge& cartRidge, Cartridge& bootrom) :
+    NoMBC::NoMBC(Cartridge& cartRidge, Rom& bootrom) :
         MBCInterface(cartRidge, bootrom)
     {
     }
@@ -21,7 +21,7 @@ namespace P4Boy
         // do nothing
     }
 
-    MBC1::MBC1(Cartridge& cartridge, Cartridge& bootrom) :
+    MBC1::MBC1(Cartridge& cartridge, Rom& bootrom) :
         MBCInterface(cartridge, bootrom),
         romBank(1),
         ramBank(0),
@@ -40,7 +40,7 @@ namespace P4Boy
         {
             if (address <= 0xFF && bootRomEnabled)
             {
-                return bootrom.ReadRom(address);
+                return bootrom.Read(address);
             }
             return cartRidge.ReadRom(address);
         }
