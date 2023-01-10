@@ -9,6 +9,7 @@ namespace P4Boy
 	{
 		return new AddressRange(start, end, new AddressAction_SimpleMemory(end - start, start), name);
 	}
+
 	void Motherboard::Tick()
 	{
 
@@ -34,6 +35,16 @@ namespace P4Boy
 		// RAM
 		mainBus.AddRange(MakeSimpleMemoryAddressRange(0xC000, 0xCFFF, "RAM0"));
 		mainBus.AddRange(MakeSimpleMemoryAddressRange(0xD000, 0xDFFF, "RAM1"));
+
+		mainBus.AddRange(0xE000, 0xFDFF, new AddressAction_SingleAction(
+			[&mainBus](Address addr, uint8_t value)
+			{
+				mainBus.Set_8b(addr - (0xE000 - 0xC000), value);
+			},
+			[&mainBus](Address addr) -> uint8_t
+			{
+				return mainBus.Get_8b(addr - (0xE000 - 0xC000));
+			}), "ECHO RAM");
 
 		// OAM FE00	FE9F
 		mainBus.AddRange(MakeSimpleMemoryAddressRange(0xFE00, 0xFE9F, "OAM"));

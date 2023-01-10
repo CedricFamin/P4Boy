@@ -147,6 +147,9 @@
     <ClCompile Include="imgui-sfml\imgui-SFML.cpp">
       <Filter>Fichiers sources\ImgUI</Filter>
     </ClCompile>
+    <ClCompile Include="MBC.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clock.h">
@@ -496,6 +499,9 @@
     </ClInclude>
     <ClInclude Include="include\SFML\Audio\InputSoundFile.hpp">
       <Filter>Fichiers d%27en-tête\SFML\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="MBC.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

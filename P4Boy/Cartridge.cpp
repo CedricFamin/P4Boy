@@ -6,58 +6,61 @@
 
 #include "AddressRange.h"
 
+#include "MBC.h"
+
 namespace P4Boy
 {
-	class AddressAction_Cartridge : public AddressAction
-	{
-	public:
-		AddressAction_Cartridge(Cartridge::shared_ptr cartridge, Cartridge::shared_ptr bootRom)
-			: _cartridge(cartridge)
-			, _bootRom(bootRom)
-		{
-
-		}
-
-		Cartridge* SelectCartridge(Address addr) const
-		{
-			if (_bootRom->IsBootRomEnabled() && addr <= 0xFF)
-			{
-				return _bootRom.get();
-			}
-			return _cartridge.get();
-		}
-		virtual uint8_t Get(Address addr) const
-		{
-			return SelectCartridge(addr)->Read(addr);
-		}
-		virtual void Set(Address addr, uint8_t) { }
-	private:
-		Cartridge::shared_ptr _cartridge;
-		Cartridge::shared_ptr _bootRom;
-	};
-
-	void Cartridge::LoadRom(char const* romPath)
+	void Rom::LoadRom(char const* romPath)
 	{
 		_romPath = romPath;
 		std::ifstream input(romPath, std::ios::binary);
 		_romCode = std::vector<unsigned char>(std::istreambuf_iterator<char>(input), {});
 	}
 
-	void Cartridge::ConnectAddressRange(Cartridge::shared_ptr& bootRom, MainBus& mainBus)
+	void Cartridge::LoadRom(char const* romPath)
 	{
-		auto bootRomEnabler = new AddressAction_SingleAction([this, bootRom](Address addr, uint8_t value)
-		{
-			this->SetBootRomEnabled(!(value != 0));
-			bootRom->SetBootRomEnabled(!(value != 0));
-		});
-		auto readRom = new AddressAction_Cartridge(Cartridge::shared_ptr(this), bootRom);
+		super::LoadRom(romPath);
 
-		mainBus.AddSingle(0xFF50, bootRomEnabler, "Boot Rom Enabler");
-		mainBus.AddRange(0x0000, 0x7FFF, readRom, "Cartridge");
+		_ram.resize(32 * 1024 * 1024);
 	}
 
-	uint8_t Cartridge::Read(Address addr) const
+	uint8_t Rom::ReadRom(Address addr) const
 	{
 		return _romCode[addr];
+	}
+
+	void Cartridge::ConnectAddressRange(Cartridge::shared_ptr& bootRom, MainBus& mainBus)
+	{
+		MBCInterface* mbsc = new MBC1(*this, *bootRom.get());
+		auto bootRomEnabler = new AddressAction_SingleAction(
+			[mbsc](Address addr, uint8_t value) 
+			{ 
+				mbsc->SetBootRomEnabled(value == 0); 
+			}
+		);
+
+		auto readRom = new AddressAction_SingleAction(
+			[mbsc](Address addr, uint8_t value) { mbsc->write(addr, value); },
+			[mbsc](Address addr) -> uint8_t { return mbsc->read(addr); }
+		);
+
+		mainBus.AddSingle(0xFF50, bootRomEnabler, "Boot Rom Enabler");
+		mainBus.AddRange(0x0000, 0x7FFF, readRom, "Cartridge - ROM");
+		mainBus.AddRange(0xA000, 0xBFFF, readRom, "Cartridge - RAM");
+	}
+
+	void Cartridge::SetupMBC()
+	{
+		auto mbcType = ReadRom(0x147);
+	}
+
+	uint8_t Cartridge::ReadRam(Address addr) const
+	{
+		return _ram[addr];
+	}
+
+	void Cartridge::WriteRam(Address addr, uint8_t data)
+	{
+		_ram[addr] = data;
 	}
 }

@@ -39,5 +39,6 @@ namespace P4Boy
 	void P4Boy::LoadRom(char const * romPath)
 	{
 		_cartridge->LoadRom(romPath);
+		_cartridge->SetupMBC();
 	}
 }

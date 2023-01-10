@@ -30,9 +30,6 @@ namespace P4Boy
 		inline uint8_t Get_8b(Address addr) const { return _action->Get(addr); }
 		inline void Set_8b(Address addr, uint8_t value) { _action->Set(addr, value); }
 
-		inline uint16_t Get_16b(Address addr) const { return (_action->Get(addr + 1) << 8) | _action->Get(addr); }
-		inline void Set_16b(Address addr, uint16_t value) { _action->Set(addr + 1, value >> 8); _action->Set(addr, value & 0xFF); }
-
 		inline uint8_t Priority() const { return _priority; }
 		inline void SetPriority(uint8_t v) { _priority = v; }
 

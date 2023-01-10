@@ -167,7 +167,6 @@ int main()
 {
    
     auto p4boy = P4Boy::P4Boy();
-    std::thread p4BoyLoop(std::bind(P4Boy_Loop, p4boy));
 
     // Passed
     // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/01-special.gb");
@@ -180,14 +179,19 @@ int main()
     // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/09-op r,r.gb");
     // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/10-bit ops.gb");
     // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/11-op a,(hl).gb");
-
-    // Todo
-    // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/02-interrupts.gb");
     
 
 
-    // p4boy.LoadRom("Roms/Tetris.gb");
+    // Todo
+    // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/02-interrupts.gb");
+    // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/cpu_instrs.gb");
+    
 
+
+    //p4boy.LoadRom("Roms/Tetris.gb");
+    p4boy.LoadRom("Roms/links_awakening.gb");
+
+    std::thread p4BoyLoop(std::bind(P4Boy_Loop, p4boy));
     sf::RenderWindow window(sf::VideoMode(640, 480), "P4Boy - Tools");
     window.setFramerateLimit(60);
     ImGui::SFML::Init(window);

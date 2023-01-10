@@ -152,6 +152,7 @@
     <ClCompile Include="Load.cpp" />
     <ClCompile Include="MainBus.cpp" />
     <ClCompile Include="Maths.cpp" />
+    <ClCompile Include="MBC.cpp" />
     <ClCompile Include="Motherboard.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="P4Boy.cpp" />
@@ -268,6 +269,7 @@
     <ClInclude Include="Joypad.h" />
     <ClInclude Include="LCD.h" />
     <ClInclude Include="MainBus.h" />
+    <ClInclude Include="MBC.h" />
     <ClInclude Include="Motherboard.h" />
     <ClInclude Include="nlohmann\json.hpp" />
     <ClInclude Include="nlohmann\json_fwd.hpp" />

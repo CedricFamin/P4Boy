@@ -88,6 +88,11 @@ namespace P4Boy
 			previousPC = PC;
 		}
 		previousPC = PC;
+		if (instruction.opcode == 0xFF)
+		{
+
+			previousPC = PC;
+		}
 		uint8_t cyles = instruction.execute(*this, instruction, value);
 		_nextInstructionCycle = cyles;
 	}
