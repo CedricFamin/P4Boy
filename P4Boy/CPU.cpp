@@ -99,11 +99,6 @@ namespace P4Boy
 
 	bool CPU::ExecuteInterrupt(Address addr)
 	{
-		halted = false;
-
-		if (!InterruptMasterEnable)
-			return true;
-
 		_mainBus->Set_16b(SP - 2, PC);
 		SP = SP - 2;
 		PC = addr;
@@ -114,37 +109,50 @@ namespace P4Boy
 	{
 		if (_interruptQueued)
 			return false;
-		if (InterruptEnableRegister.VBlank && InterruptRequestRegister.VBlank)
+
+		if (InterruptEnableRegister & InterruptRequestRegister)
 		{
-			_interruptQueued = true;
-			InterruptRequestRegister.VBlank = 0;
-			return ExecuteInterrupt(0x40);
+			if (halted)
+			{
+				halted = false;
+				PC = PC + 1;
+			}
+			if (InterruptMasterEnable)
+			{
+				if (InterruptEnableRegister.VBlank && InterruptRequestRegister.VBlank)
+				{
+					_interruptQueued = true;
+					InterruptRequestRegister.VBlank = 0;
+					return ExecuteInterrupt(0x40);
+				}
+				else if (InterruptEnableRegister.LCDStat && InterruptRequestRegister.LCDStat)
+				{
+					_interruptQueued = true;
+					InterruptRequestRegister.LCDStat = 0;
+					return ExecuteInterrupt(0x48);
+				}
+				else if (InterruptEnableRegister.Timer && InterruptRequestRegister.Timer)
+				{
+					_interruptQueued = true;
+					InterruptRequestRegister.Timer = 0;
+					return ExecuteInterrupt(0x50);
+				}
+				else if (InterruptEnableRegister.Serial && InterruptRequestRegister.Serial)
+				{
+					_interruptQueued = true;
+					InterruptRequestRegister.Serial = 0;
+					return ExecuteInterrupt(0x58);
+				}
+				else if (InterruptEnableRegister.Joypad && InterruptRequestRegister.Joypad)
+				{
+					_interruptQueued = true;
+					InterruptRequestRegister.Joypad = 0;
+					return ExecuteInterrupt(0x60);
+				}
+				else _interruptQueued = false;
+			}
 		}
-		else if (InterruptEnableRegister.LCDStat && InterruptRequestRegister.LCDStat)
-		{
-			_interruptQueued = true;
-			InterruptRequestRegister.LCDStat = 0;
-			return ExecuteInterrupt(0x48);
-		}
-		else if (InterruptEnableRegister.Timer && InterruptRequestRegister.Timer)
-		{
-			_interruptQueued = true;
-			InterruptRequestRegister.Timer = 0;
-			return ExecuteInterrupt(0x50);
-		}
-		else if (InterruptEnableRegister.Serial && InterruptRequestRegister.Serial)
-		{
-			_interruptQueued = true;
-			InterruptRequestRegister.Serial = 0;
-			return ExecuteInterrupt(0x58);
-		}
-		else if (InterruptEnableRegister.Joypad && InterruptRequestRegister.Joypad)
-		{
-			_interruptQueued = true;
-			InterruptRequestRegister.Joypad = 0;
-			return ExecuteInterrupt(0x60);
-		}
-		else _interruptQueued = false;
+		
 		return false;
 	}
 
@@ -184,6 +192,5 @@ namespace P4Boy
 				_interruptQueued = false;
 			}
 		}
-		halted = false;
 	}
 }

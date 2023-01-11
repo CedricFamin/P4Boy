@@ -132,7 +132,7 @@ namespace P4Boy
 		_romBankNb = RomSizeToNbRomBanks(_romSize);
 		_ramBankNb = RamSizeToNbRamBanks(_ramSize);
 
-		if (_ramBankNb > 1) _ram.resize(_ramBankNb * BANK_RAM_SIZE);
+		if (_ramBankNb >= 1) _ram.resize(_ramBankNb * BANK_RAM_SIZE);
 	}
 
 	void Cartridge::ConnectAddressRange(Rom::shared_ptr& bootRom, MainBus& mainBus)

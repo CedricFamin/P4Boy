@@ -59,6 +59,9 @@ namespace P4Boy
 		uint8_t ReadRom(Address addr) const { return _rom.Read(addr); }
 		uint8_t ReadRam(Address addr) const;
 		void WriteRam(Address addr, uint8_t data);
+
+		uint8_t GetRomBankNB() const { return _romBankNb; }
+		uint8_t GetRamBankNB() const { return _ramBankNb; }
 	protected:
 	private:
 		uint8_t					_romBankNb = 0;

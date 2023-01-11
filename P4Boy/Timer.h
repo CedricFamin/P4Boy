@@ -1,4 +1,7 @@
 #pragma once
+
+#include <array>
+
 #include "Utility.h"
 #include "Register.h"
 #include "MainBus.h"
@@ -27,6 +30,10 @@ namespace P4Boy
 
 
 		inline Register_TAC& operator=(uint8_t value) { _value = value; return *this; }
+		inline uint16_t GetClock() {
+			static const std::array<uint16_t, 4> frequencies = { 1024, 16, 64, 256 };
+			return frequencies[InputClock];
+		}
 
 		SubRegister_1b<Register_TAC> Enable;
 		SubRegister_2b<Register_TAC> InputClock;
@@ -45,6 +52,7 @@ namespace P4Boy
 		void Tick();
 	protected:
 	private:
+		uint16_t		_tick = 0;
 		MainBus*		_mainBus = nullptr;;
 		Register_Div	_div;
 		Register_Modulo _modulo;

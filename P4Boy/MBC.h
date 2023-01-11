@@ -37,6 +37,10 @@ namespace P4Boy
 
     class MBC1 : public MBCInterface
     {
+        enum BankMode {
+            SIMPLE
+            , ADVANCED
+        };
     public:
         MBC1(Cartridge& cartRidge, Rom& bootrom);
         ~MBC1();
@@ -47,7 +51,7 @@ namespace P4Boy
     private:
         uint8_t romBank;
         uint8_t ramBank;
-        uint8_t bankMode;
+        BankMode bankMode = BankMode::SIMPLE;
         bool ramEnable;
     };
 

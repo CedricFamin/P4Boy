@@ -1,3 +1,4 @@
+#include <cassert>
 #include "MBC.h"
 
 namespace P4Boy
@@ -13,6 +14,10 @@ namespace P4Boy
 
     uint8_t NoMBC::read(uint16_t address)
     {
+        if (address <= 0xFF && bootRomEnabled)
+        {
+            return bootrom.Read(address);
+        }
         return cartRidge.ReadRom(address);
     }
 
@@ -25,7 +30,6 @@ namespace P4Boy
         MBCInterface(cartridge, bootrom),
         romBank(1),
         ramBank(0),
-        bankMode(0),
         ramEnable(false)
     {
     }
@@ -46,11 +50,11 @@ namespace P4Boy
         }
         else if (address < 0x8000)
         {
-            return cartRidge.ReadRom((address - 0x4000) + (romBank - 1) * 0x4000);
+            return cartRidge.ReadRom((romBank - 1) * 0x4000 + address);
         }
         else if (address < 0xA000)
         {
-            return 0xFF;
+            assert(false);
         }
         else if (address < 0xC000)
         {
@@ -63,10 +67,7 @@ namespace P4Boy
                 return 0xFF;
             }
         }
-        else
-        {
-            return 0xFF;
-        }
+        assert(false);
     }
 
     void MBC1::write(uint16_t address, uint8_t data)
@@ -78,15 +79,27 @@ namespace P4Boy
         else if (address < 0x4000)
         {
             romBank = (data & 0x1F) | (romBank & 0x60);
+            if (romBank == 0x00 || romBank == 0x20 || romBank == 0x40 || romBank == 0x60)
+                romBank += 1;
+            romBank %= cartRidge.GetRomBankNB();
         }
         else if (address < 0x6000)
         {
-            if (bankMode)
-            romBank = (data & 0x03) << 5 | (romBank & 0x1F);
+            if (bankMode == BankMode::SIMPLE)
+            {
+                ramBank = (data & 0x3) % cartRidge.GetRamBankNB();
+            }
+            else
+            {
+                romBank = (data & 0x03) << 5 | (romBank & 0b00011111);
+            }
+            
         }
         else if (address < 0x8000)
         {
-            bankMode = data & 0x1;
+            bankMode = BankMode::SIMPLE;
+            if (data & 0x1)
+                bankMode = BankMode::ADVANCED;
         }
         else if (address < 0xA000)
         {

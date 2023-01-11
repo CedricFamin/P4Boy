@@ -19,7 +19,6 @@ namespace P4Boy
 		_cpu->PC = 0;
 
 		_motherboard->ConnectAddressRange(_motherboard->GetMainBus());
-		_cartridge->ConnectAddressRange(_bootRom, _motherboard->GetMainBus());
 		_cpu->ConnectAddressRange(_motherboard->GetMainBus());
 		_lcd->ConnectAddressRange(_motherboard->GetMainBus());
 		_joypad->ConnectAddressRange(_motherboard->GetMainBus());
@@ -39,5 +38,6 @@ namespace P4Boy
 	void P4Boy::LoadRom(char const * romPath)
 	{
 		_cartridge->LoadRom(romPath);
+		_cartridge->ConnectAddressRange(_bootRom, _motherboard->GetMainBus());
 	}
 }

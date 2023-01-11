@@ -170,6 +170,7 @@ int main()
 
     // Passed
     // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/01-special.gb");
+    // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/02-interrupts.gb");
     // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/03-op sp,hl.gb");
     // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/04-op r,imm.gb");
     // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/05-op rp.gb");
@@ -180,16 +181,12 @@ int main()
     // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/10-bit ops.gb");
     // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/11-op a,(hl).gb");
     
-
-
     // Todo
-    // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/02-interrupts.gb");
-    // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/cpu_instrs.gb");
+    p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/cpu_instrs.gb");
     
-
-
     //p4boy.LoadRom("Roms/Tetris.gb");
-    p4boy.LoadRom("Roms/links_awakening.gb");
+    //p4boy.LoadRom("Roms/links_awakening.gb");
+    //p4boy.LoadRom("Roms/pokemon_yellow.gb");
 
     std::thread p4BoyLoop(std::bind(P4Boy_Loop, p4boy));
     sf::RenderWindow window(sf::VideoMode(640, 480), "P4Boy - Tools");
