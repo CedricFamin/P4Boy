@@ -17,6 +17,9 @@ namespace P4Boy
             if (bootRomEnabled)
                 bootRomEnabled = enable; 
         }
+
+        virtual uint8_t GetCurrentRomBank() const { return 0; }
+        virtual uint8_t GetCurrentRamBank() const { return 0; }
     protected:
         Cartridge& cartRidge;
         Rom& bootrom;
@@ -48,6 +51,8 @@ namespace P4Boy
         uint8_t read(uint16_t address);
         void write(uint16_t address, uint8_t data);
 
+        virtual uint8_t GetCurrentRomBank() const { return romBank; }
+        virtual uint8_t GetCurrentRamBank() const { return ramBank; }
     private:
         uint8_t romBank;
         uint8_t ramBank;

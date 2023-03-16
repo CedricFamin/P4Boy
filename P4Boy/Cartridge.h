@@ -8,6 +8,7 @@
 
 namespace P4Boy
 {
+	class MBCInterface;
 	class Rom
 	{
 	public:
@@ -62,6 +63,23 @@ namespace P4Boy
 
 		uint8_t GetRomBankNB() const { return _romBankNb; }
 		uint8_t GetRamBankNB() const { return _ramBankNb; }
+
+		const std::vector<uint8_t>& GetNintendoLogo() const { return _nintendoLogo; }
+		const std::string& GetTitle() const { return _title; }
+		const std::string& GetManufacturerCode() const { return _manufacturerCode; }
+		uint8_t GetGCBFlag() const { return _GCBFlag; }
+		const std::string& GetNewLicenseeCode() const { return _newLicenseeCode; }
+		uint8_t GetSGBFlag() const { return _SGBFlag; }
+		uint8_t GetCartridgeType() const { return _cartridgeType; }
+		uint8_t GetRomSize() const { return _romSize; }
+		uint8_t GetRamSize() const { return _ramSize; }
+		uint8_t GetDestinationCode() const { return _destinationCode; }
+		uint8_t GetOldLicenseeCode() const { return _oldLicenseeCode; }
+		uint8_t GetMaskRomVersionNumber() const { return _maskRomVersionNumber; }
+		uint8_t GetHeaderChecksum() const { return _headerChecksum; }
+		uint32_t GetGlobalChecksum() const { return _globalCheckSum; }
+
+		MBCInterface const* GetMbcInterface() const { return _mbc; }
 	protected:
 	private:
 		uint8_t					_romBankNb = 0;
@@ -84,6 +102,8 @@ namespace P4Boy
 		uint8_t					_maskRomVersionNumber = 0;
 		uint8_t					_headerChecksum = 0;
 		uint32_t				_globalCheckSum = 0;
+
+		MBCInterface* _mbc = nullptr;
 	};
 }
 

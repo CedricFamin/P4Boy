@@ -1,20 +1,20 @@
-// P4Boy.cpp : Ce fichier contient la fonction 'main'. L'exécution du programme commence et se termine à cet endroit.
-//
 
 #include <iostream>
-#include "P4Boy.h"
+#include <sstream>
+#include <iomanip>
 #include <chrono>
-
-#include "imgui.h"
-#include "imgui-SFML.h"
-
+#include <thread>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
-#include <sstream>
-#include <iomanip>
 
-#include <thread>
+#include "P4Boy.h"
+
+#include "imgui.h"
+#include "imgui-SFML.h"
+#include "MemoryDebug.h"
+#include "CPUDebug.h"
+#include "CartridgeDebug.h"
 
 void P4Boy_Loop(P4Boy::P4Boy & p4boy)
 {
@@ -35,133 +35,6 @@ void P4Boy_Loop(P4Boy::P4Boy & p4boy)
     }
 }
 
-class ShowCPURegisters
-{
-public:
-
-    ShowCPURegisters(P4Boy::CPU::shared_ptr cpu) : _cpu(cpu) {}
-
-    void MenuToolBarUpdate()
-    {
-        if (ImGui::BeginMenu("CPU"))
-        {
-            if (ImGui::MenuItem("Registers", nullptr, _show))
-            {
-                _show = !_show;
-            }
-            if (ImGui::MenuItem("Logs"))
-            {
-                _cpu->debugShowInstructions = !_cpu->debugShowInstructions;
-            }
-            ImGui::EndMenu();
-        }
-    }
-
-    void WindowUpdate()
-    {
-        if (_show)
-        {
-            ImGui::Begin("CPU Registers");
-            ImGui::Button("CPU");
-            ImGui::End();
-        }
-    }
-private:
-    P4Boy::CPU::shared_ptr _cpu;
-    bool _show = false;
-};
-
-class ShowMemory
-{
-public:
-
-    ShowMemory(P4Boy::MainBus& mainBus) : _mainBus(mainBus) {}
-
-    void MenuToolBarUpdate()
-    {
-
-        if (ImGui::BeginMenu("Memory"))
-        {
-            if (ImGui::MenuItem("Show Memory", nullptr, _show))
-            {
-                _show = !_show;
-            }
-            ImGui::EndMenu();
-        }
-    }
-
-    void UpdateMemoryContent(std::shared_ptr<P4Boy::AddressRange> range)
-    {
-        _memoryContent.clear();
-        if (!range)
-        {
-            _currentRange= "";
-           
-        }
-        std::stringstream ss;
-        uint8_t nbHex = 0;
-        uint32_t addr = range->From();
-        for (; addr <= range->To(); ++addr)
-        {
-            if (nbHex % 16 == 0)
-            {
-                ss << "0x" << std::setfill('0') << std::setw(4) << std::hex << addr << ": ";
-            }
-            ss << std::setfill('0') << std::setw(2) << std::hex << uint16_t(_mainBus.Get_8b(addr)) << " ";
-            ++nbHex;
-
-            if (nbHex % 16 == 0)
-            {
-                _memoryContent.push_back(ss.str());
-                ss.str("");
-            }
-        }
-        _memoryContent.push_back(ss.str());
-
-        std::stringstream currentRange;
-        currentRange << "" << std::setfill('0') << std::setw(4) << std::hex << range->From() << " - ";
-        currentRange << "" << std::setfill('0') << std::setw(4) << std::hex << range->To() << " : ";
-        currentRange << range->Name();
-        _currentRange = currentRange.str();
-    }
-    void WindowUpdate()
-    {
-        if (_show)
-        {
-            ImGui::Begin("Show Memory");
-
-            
-            if (ImGui::BeginCombo("Address type", _currentRange.c_str()))
-            {
-                for (auto const& range : _mainBus.Ranges())
-                {
-                    std::stringstream ss;
-                    ss << "" << std::setfill('0') << std::setw(4) << std::hex << range->From() << " - ";
-                    ss << "" << std::setfill('0') << std::setw(4) << std::hex << range->To() << " : ";
-                    ss << range->Name();
-
-                    if (ImGui::Selectable(ss.str().c_str()))
-                    {
-                        UpdateMemoryContent(range);
-                    }
-                }
-                ImGui::EndCombo();
-            }
-            
-            for (auto& line : _memoryContent)
-                ImGui::Text(line.c_str());
-                
-
-            ImGui::End();
-        }
-    }
-private:
-    P4Boy::MainBus& _mainBus;
-    std::vector<std::string> _memoryContent;
-    std::string _currentRange;
-    bool _show = false;
-};
-
 
 int main()
 {
@@ -180,13 +53,16 @@ int main()
     // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/09-op r,r.gb");
     // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/10-bit ops.gb");
     // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/individual/11-op a,(hl).gb");
+    // p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/cpu_instrs.gb");
     
     // Todo
-    p4boy.LoadRom("Roms/gb-test-roms-master/cpu_instrs/cpu_instrs.gb");
+    
     
     //p4boy.LoadRom("Roms/Tetris.gb");
-    //p4boy.LoadRom("Roms/links_awakening.gb");
+    p4boy.LoadRom("Roms/links_awakening.gb");
     //p4boy.LoadRom("Roms/pokemon_yellow.gb");
+    //p4boy.LoadRom("Roms/Mario's_Picross(FR).gb");
+    
 
     std::thread p4BoyLoop(std::bind(P4Boy_Loop, p4boy));
     sf::RenderWindow window(sf::VideoMode(640, 480), "P4Boy - Tools");
@@ -196,6 +72,7 @@ int main()
     sf::Clock deltaClock;
     ShowCPURegisters showCPURegisters(p4boy.GetCPU());
     ShowMemory showMemory(p4boy.GetMainBus());
+    ShowCartridge showCartridge(p4boy.GetCartridge());
 
     bool showDemo = false;
     while (window.isOpen()) {
@@ -228,6 +105,7 @@ int main()
 
             showCPURegisters.MenuToolBarUpdate();
             showMemory.MenuToolBarUpdate();
+            showCartridge.MenuToolBarUpdate();
 
             if (ImGui::BeginMenu("Demo"))
             {
@@ -241,6 +119,7 @@ int main()
         if (showDemo) ImGui::ShowDemoWindow();
         showCPURegisters.WindowUpdate();
         showMemory.WindowUpdate();
+        showCartridge.WindowUpdate();
 
         ImGui::End();
         

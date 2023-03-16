@@ -67,6 +67,18 @@
     <Filter Include="Fichiers sources\ImgUI">
       <UniqueIdentifier>{df551339-c9c2-400d-afd7-55031c33f521}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\Debug">
+      <UniqueIdentifier>{ace0e5d0-403f-4dd1-b824-e5bf661bd4ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Debug">
+      <UniqueIdentifier>{761f3c6b-3896-4323-ab41-328e8840a7b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Core\MBC">
+      <UniqueIdentifier>{31581b1c-0a39-43a3-be0e-b53f8f56f1e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Core\MBC">
+      <UniqueIdentifier>{317dba61-08d5-40aa-82af-965a8dc81bac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -147,8 +159,17 @@
     <ClCompile Include="imgui-sfml\imgui-SFML.cpp">
       <Filter>Fichiers sources\ImgUI</Filter>
     </ClCompile>
+    <ClCompile Include="CPUDebug.cpp">
+      <Filter>Fichiers sources\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryDebug.cpp">
+      <Filter>Fichiers sources\Debug</Filter>
+    </ClCompile>
     <ClCompile Include="MBC.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Core\MBC</Filter>
+    </ClCompile>
+    <ClCompile Include="CartridgeDebug.cpp">
+      <Filter>Fichiers sources\Debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -500,8 +521,17 @@
     <ClInclude Include="include\SFML\Audio\InputSoundFile.hpp">
       <Filter>Fichiers d%27en-tête\SFML\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="CPUDebug.h">
+      <Filter>Fichiers d%27en-tête\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryDebug.h">
+      <Filter>Fichiers d%27en-tête\Debug</Filter>
+    </ClInclude>
     <ClInclude Include="MBC.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\Core\MBC</Filter>
+    </ClInclude>
+    <ClInclude Include="CartridgeDebug.h">
+      <Filter>Fichiers d%27en-tête\Debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

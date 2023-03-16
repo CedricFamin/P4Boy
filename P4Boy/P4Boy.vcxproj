@@ -137,9 +137,11 @@
     <ClCompile Include="AddressRange.cpp" />
     <ClCompile Include="Binary.cpp" />
     <ClCompile Include="Cartridge.cpp" />
+    <ClCompile Include="CartridgeDebug.cpp" />
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="ControlFlow.cpp" />
     <ClCompile Include="CPU.cpp" />
+    <ClCompile Include="CPUDebug.cpp" />
     <ClCompile Include="CPUIntructionManager.cpp" />
     <ClCompile Include="imgui-sfml\imgui-SFML.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -153,6 +155,7 @@
     <ClCompile Include="MainBus.cpp" />
     <ClCompile Include="Maths.cpp" />
     <ClCompile Include="MBC.cpp" />
+    <ClCompile Include="MemoryDebug.cpp" />
     <ClCompile Include="Motherboard.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="P4Boy.cpp" />
@@ -165,8 +168,10 @@
     <ClInclude Include="AddressAction.h" />
     <ClInclude Include="AddressRange.h" />
     <ClInclude Include="Cartridge.h" />
+    <ClInclude Include="CartridgeDebug.h" />
     <ClInclude Include="Clock.h" />
     <ClInclude Include="CPU.h" />
+    <ClInclude Include="CPUDebug.h" />
     <ClInclude Include="CPUIntructionManager.h" />
     <ClInclude Include="include\SFML\Audio.hpp" />
     <ClInclude Include="include\SFML\Audio\AlResource.hpp" />
@@ -270,6 +275,7 @@
     <ClInclude Include="LCD.h" />
     <ClInclude Include="MainBus.h" />
     <ClInclude Include="MBC.h" />
+    <ClInclude Include="MemoryDebug.h" />
     <ClInclude Include="Motherboard.h" />
     <ClInclude Include="nlohmann\json.hpp" />
     <ClInclude Include="nlohmann\json_fwd.hpp" />

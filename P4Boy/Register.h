@@ -84,7 +84,7 @@ namespace P4Boy
 		typedef typename parent_register::valueType parent_vtype;
 	public:
 		SubRegister_2b(parent_register& parent, char bitShift) : _register(parent), _bitShift(bitShift), _mask(~parent_vtype(0b11 << _bitShift)) {}
-		inline SubRegister_2b& operator=(parent_vtype value) { value <<= _bitShift; _register = (_register & _mask) | value; return *this; }
+		inline SubRegister_2b& operator=(parent_vtype value) { value <<= _bitShift; _register = (_register & ~parent_vtype(0b11 << _bitShift)) | value; return *this; }
 		uint8_t Get() const { return (_register.Get() >> _bitShift) & 0b11; }
 	private:
 		parent_register& _register;

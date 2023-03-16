@@ -92,6 +92,7 @@ namespace P4Boy
 
 			_joypadStateAction = joypadStateAction;
 			_joypadStateDirection = joypadStateDirection;
+			sf::sleep(sf::milliseconds(30));
 		}
 	}
 

@@ -137,17 +137,17 @@ namespace P4Boy
 
 	void Cartridge::ConnectAddressRange(Rom::shared_ptr& bootRom, MainBus& mainBus)
 	{
-		MBCInterface* mbsc = CreateMBC(_cartridgeType, *this, *bootRom.get());
+		_mbc = CreateMBC(_cartridgeType, *this, *bootRom.get());
 		auto bootRomEnabler = new AddressAction_SingleAction(
-			[mbsc](Address addr, uint8_t value) 
+			[this](Address addr, uint8_t value) 
 			{ 
-				mbsc->SetBootRomEnabled(value == 0); 
+				this->_mbc->SetBootRomEnabled(value == 0);
 			}
 		);
 
 		auto readRom = new AddressAction_SingleAction(
-			[mbsc](Address addr, uint8_t value) { mbsc->write(addr, value); },
-			[mbsc](Address addr) -> uint8_t { return mbsc->read(addr); }
+			[this](Address addr, uint8_t value) { this->_mbc->write(addr, value); },
+			[this](Address addr) -> uint8_t { return this->_mbc->read(addr); }
 		);
 
 		mainBus.AddSingle(0xFF50, bootRomEnabler, "Boot Rom Enabler");

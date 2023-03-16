@@ -90,7 +90,7 @@ namespace P4Boy
 		* Bit 1 - 0 - Color for index 0
 		*/
 	public:
-		BGP() : ColorIdx0(*this, 0), ColorIdx1(*this, 2), ColorIdx2(*this, 4), ColorIdx3(*this, 6) {}
+		BGP() : ColorIdx0(*this, 0), ColorIdx1(*this, 2), ColorIdx2(*this, 4), ColorIdx3(*this, 6) { }
 
 		SubRegister_2b<Register_8b> ColorIdx3;
 		SubRegister_2b<Register_8b> ColorIdx2;

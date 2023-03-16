@@ -33,11 +33,18 @@ namespace P4Boy
 
 	void LCD::DrawBackground()
 	{
-		uint16_t tile_data_addr = 0x8000;
-		uint16_t time_map_addr = 0x9800;
+		uint16_t tile_data_addr = _LCDC.BGWTileDataArea ? 0x8000: 0x8800;
+		uint16_t time_map_addr = _LCDC.BGWTileMapArea ? 0x9C00 : 0x9800;
 
-		sf::Color colors[] = {{0x08, 0x18, 0x28}, {0x34, 0x68, 0x56}, {0x88, 0xC0, 0x70}, {0xE0, 0xF8, 0xD0}};
-		sf::VertexArray vertex;
+		static const sf::Color baseColors[] = { {0xE0, 0xF8, 0xD0}, {0x88, 0xC0, 0x70}, {0x34, 0x68, 0x56}, {0x08, 0x18, 0x28} };
+		sf::Color colors[4] = {
+			baseColors[_BGP.ColorIdx0]
+			, baseColors[_BGP.ColorIdx1]
+			, baseColors[_BGP.ColorIdx2]
+			, baseColors[_BGP.ColorIdx3]
+		};
+		static sf::VertexArray vertex(sf::PrimitiveType::Points, 144 * 160);
+		uint16_t vindex = 0;
 		if (_LCDC.BGWEnable_Priority)
 		{
 			for (uint8_t y = 0; y < 32; ++y)
@@ -48,6 +55,14 @@ namespace P4Boy
 					if (!tileIndex)
 						continue;
 					uint16_t tileAddr = tile_data_addr + tileIndex * 16;
+					if (_LCDC.BGWTileDataArea == 0)
+					{
+						tileAddr = tile_data_addr + (tileIndex - 128) * 16;
+						if (tileIndex <= 127)
+						{
+							tileAddr = tile_data_addr + (tileIndex + 128) * 16;
+						}
+					}
 					for (uint8_t y_tile = 0; y_tile < 8; ++y_tile)
 					{
 						uint8_t pixels1 = _mainBus->Get_8b(tileAddr + (y_tile * 2));
@@ -66,12 +81,12 @@ namespace P4Boy
 			}
 		}
 		
-
 		if (_LCDC.WindowEnable)
 		{
 			_LCDC.WindowEnable = _LCDC.WindowEnable.Get();
 		}
 		_window.draw(vertex);
+		vertex.resize(0);
 	}
 
 	void LCD::DrawSprites()
@@ -82,7 +97,9 @@ namespace P4Boy
 		uint16_t oam_addr = 0xFE00;
 
 		sf::Color colors[] = { {0x08, 0x18, 0x28}, {0x34, 0x68, 0x56}, {0x88, 0xC0, 0x70}, {0xE0, 0xF8, 0xD0} };
-		sf::VertexArray vertex;
+		
+		static sf::VertexArray vertex(sf::PrimitiveType::Points, 144 * 160);
+		uint16_t vindex = 0;
 		for (uint8_t i = 0; i < 40; ++i)
 		{
 			uint16_t spriteAddr = oam_addr + i * 4;
@@ -91,38 +108,37 @@ namespace P4Boy
 			uint8_t xPos = _mainBus->Get_8b(spriteAddr + 1) - 8;
 			uint8_t tileIndex = _mainBus->Get_8b(spriteAddr + 2);
 			uint8_t attributes = _mainBus->Get_8b(spriteAddr + 3);
-
-			if (tileIndex)
+			if (!tileIndex)
+				continue;
+			uint16_t tileAddr = tile_data_addr + tileIndex * 16;
+			for (uint8_t y_tile = 0; y_tile < 8; ++y_tile)
 			{
-				uint16_t tileAddr = tile_data_addr + tileIndex * 16;
-				for (uint8_t y_tile = 0; y_tile < 8; ++y_tile)
+				uint8_t pixels1 = _mainBus->Get_8b(tileAddr + (y_tile * 2));
+				uint8_t pixels2 = _mainBus->Get_8b(tileAddr + (y_tile * 2 + 1));
+				for (uint8_t x_tile = 0; x_tile <= 8; ++x_tile)
 				{
-					uint8_t pixels1 = _mainBus->Get_8b(tileAddr + (y_tile * 2));
-					uint8_t pixels2 = _mainBus->Get_8b(tileAddr + (y_tile * 2 + 1));
-					for (uint8_t x_tile = 0; x_tile <= 8; ++x_tile)
+					uint8_t color = ((pixels1 >> (7 - x_tile)) & 1) | (((pixels2 >> (7 - x_tile)) & 1) << 1);
+					int coordX = xPos + x_tile;
+					int coordY = yPos + y_tile;
+					if (coordX >= 0 && coordX <= 160 && coordY >= 0 && coordY <= 144)
 					{
-						uint8_t color = ((pixels1 >> (7 - x_tile)) & 1) | (((pixels2 >> (7 - x_tile)) & 1) << 1);
-						int coordX = xPos + x_tile;
-						int coordY = yPos + y_tile;
-						if (coordX >= 0 && coordX <= 160 && coordY >= 0 && coordY <= 144)
-						{
-							vertex.append(sf::Vertex(sf::Vector2f(coordX, coordY), colors[color]));
-
-						}
+						vertex.append(sf::Vertex(sf::Vector2f(coordX, coordY), colors[color]));
 					}
 				}
 			}
 		}
+
 		_window.draw(vertex);
+		vertex.resize(0);
 	}
 	void LCD::Tick()
 	{
 		static uint32_t MODE_TIMING[] = { 85, 456, 80, 291 };
 		static uint32_t nextTickUpdate = 0;
 
-		Register_Interrupt requestInterrupt = 0;
 		if (nextTickUpdate == 0)
 		{
+			Register_Interrupt requestInterrupt = 0;
 			_LYC = _LY;
 			uint8_t currentMode = _LCDS.Mode;
 			if (currentMode == 2)
@@ -147,7 +163,7 @@ namespace P4Boy
 					requestInterrupt.VBlank = 1;
 					_LCDS.VblankInterruptSource = 1;
 
-					_window.clear({ 0x08, 0x18, 0x28 });
+					_window.clear({ 0xE0, 0xF8, 0xD0 });
 					DrawBackground();
 					DrawSprites();
 					_window.display();
@@ -170,9 +186,9 @@ namespace P4Boy
 			}
 
 			nextTickUpdate = MODE_TIMING[currentMode] / 2;
+			if (requestInterrupt > 0) Register_Interrupt::MergeRequestInterrupt(*_mainBus, requestInterrupt);
 		}
-
-		if (requestInterrupt > 0) Register_Interrupt::MergeRequestInterrupt(*_mainBus, requestInterrupt);
-		nextTickUpdate -= 1;
+		else
+			nextTickUpdate -= 1;
 	}
 }

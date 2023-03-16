@@ -10,8 +10,10 @@ namespace P4Boy
 
     void Clock::Wait()
     {
-        std::this_thread::sleep_until(_nextClockTick - std::chrono::nanoseconds(20));
         auto currentTime = std::chrono::high_resolution_clock::now();
+        if (currentTime < _nextClockTick)
+            std::this_thread::sleep_for(_nextClockTick - currentTime);
+        
         _nextClockTick += _tickDuration;
     }
     float Clock::GetCurrentFequencyMhz() const
