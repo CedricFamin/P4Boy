@@ -45,14 +45,15 @@ namespace P4Boy
 	{
 		_mainBus = &mainBus;
 
-		_mainBus->AddSingle(0xFFFF, new AddressAction_DirectValue<Register_Interrupt>(InterruptEnableRegister), "Interrupt Enable Register");
-		_mainBus->AddSingle(0xFF0F, new AddressAction_DirectValue<Register_Interrupt>(InterruptRequestRegister), "Interrupt Request Register");
+		_mainBus->AddDirectAccess(0xFFFF, InterruptEnableRegister, "Interrupt Enable Register");
+		_mainBus->AddDirectAccess(0xFF0F, InterruptRequestRegister, "Interrupt Request Register");
 	}
 
 	void CPU::ExecuteNextOpcode()
 	{
 		static uint16_t previousPC = -1;
 		uint16_t opCode = _mainBus->Get_8b(PC);
+		previousPC = PC;
 		PC = PC + 1;
 		if (opCode == 0xCB)
 		{
@@ -83,11 +84,6 @@ namespace P4Boy
 			if (showValue) std::cout << " (0x" << std::setfill('0') << std::setw(4) << std::hex << value << ")";
 			std::cout << std::endl;
 		}
-		if (previousPC == PC)
-		{
-			previousPC = PC;
-		}
-		previousPC = PC;
 		if (instruction.opcode == 0xFF)
 		{
 

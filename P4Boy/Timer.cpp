@@ -13,10 +13,10 @@ namespace P4Boy
 	{
 		_mainBus = &mainBus;
 
-		mainBus.AddSingle(0xFF04, new AddressAction_DirectValue<Register_Div>(_div), "Timer - DIV");
-		mainBus.AddSingle(0xFF05, new AddressAction_DirectValue<Register_Tima>(_tima), "Timer - TIMA");
-		mainBus.AddSingle(0xFF06, new AddressAction_DirectValue<Register_Modulo>(_modulo), "Timer - Modula");
-		mainBus.AddSingle(0xFF07, new AddressAction_DirectValue<Register_TAC>(_tac), "Timer - TAC");
+		mainBus.AddDirectAccess(0xFF04, _div, "Timer - DIV");
+		mainBus.AddDirectAccess(0xFF05, _tima, "Timer - TIMA");
+		mainBus.AddDirectAccess(0xFF06, _modulo, "Timer - Modula");
+		mainBus.AddDirectAccess(0xFF07, _tac, "Timer - TAC");
 	}
 	void Timer::Tick()
 	{

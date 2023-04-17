@@ -137,6 +137,9 @@ namespace P4Boy
 		void DrawBackground();
 		void DrawSprites();
 		sf::RenderWindow _window;
+		sf::Texture		 _renderTexture;
+		sf::Image		 _renderImg;
+		sf::Sprite		 _renderSprite;
 		sf::Clock _deltaClock;
 
 		LCDC	_LCDC;

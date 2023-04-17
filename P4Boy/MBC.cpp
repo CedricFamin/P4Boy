@@ -45,7 +45,7 @@ namespace P4Boy
         if (address <= 0x3FFF)
             return cartRidge.ReadRom(address);
         if (address >= 0x4000 && address <= 0x7FFF)
-            return cartRidge.ReadRom(address - 0x4000 + romBank * 0x4000);
+            return cartRidge.ReadRom(address - 0x4000 + (romBank % cartRidge.GetRomBankNB()) * 0x4000);
         if (address >= 0xA000 && address <= 0xBFFF)
             return ramEnable ? cartRidge.ReadRam(address - 0xA000 + ramBank * 0x2000) : 0xFF;
 
@@ -61,17 +61,16 @@ namespace P4Boy
         }
         else if (address < 0x4000)
         {
-            romBank = (data & 0x1F);
+            romBank = (romBank & ~0x1F) | (data & 0x1F);
             if (romBank == 0x00 || romBank == 0x20 || romBank == 0x40 || romBank == 0x60)
                 romBank += 1;
-            romBank %= cartRidge.GetRomBankNB();
         }
         else if (address < 0x6000)
         {
             if (bankMode == BankMode::SIMPLE)
-                ramBank = (data & 0x3) % cartRidge.GetRamBankNB();
+                ramBank = (data & 0b11) % cartRidge.GetRamBankNB();
             else
-                romBank = ((data & 0x03) << 5) | (romBank & 0b00011111);
+                romBank = ((data & 0b11) << 5) | (romBank & 0b00011111);
             
         }
         else if (address < 0x8000)

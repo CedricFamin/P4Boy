@@ -28,6 +28,12 @@ namespace P4Boy
 		void AddSingle(Address addr, AddressAction* action, std::string const & name, uint8_t priority = 1);
 
 		std::vector<std::shared_ptr<AddressRange>>& Ranges() { return _allRanges; }
+
+		template<typename T>
+		void AddDirectAccess(Address addr, T& object, std::string const& name, uint8_t priority = 1)
+		{
+			AddSingle(addr, new AddressAction_DirectValue<T>(object), name, priority);
+		}
 	protected:
 	private:
 		std::vector<std::shared_ptr<AddressRange>> _allRanges;

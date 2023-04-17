@@ -7,27 +7,27 @@
 
 namespace P4Boy
 {
-	LCD::LCD() : _window(sf::VideoMode(160, 144), "SFML works!"), _mainBus(nullptr)
+	LCD::LCD() : _window(sf::VideoMode(160, 144), "P4Boy"), _renderTexture(), _renderImg(), _mainBus(nullptr)
 	{
 	}
 	
 	void LCD::ConnectAddressRange(MainBus& mainBus)
 	{
-		mainBus.AddSingle(0xFF40, new AddressAction_DirectValue<LCDC>(this->_LCDC), "LCDC");
-		mainBus.AddSingle(0xFF41, new AddressAction_DirectValue<LCDS>(this->_LCDS), "LCDS");
+		mainBus.AddDirectAccess(0xFF40, this->_LCDC, "LCDC");
+		mainBus.AddDirectAccess(0xFF41, this->_LCDS, "LCDS");
 
-		mainBus.AddSingle(0xFF44, new AddressAction_DirectValue<uint8_t>(this->_LY), "LY");
-		mainBus.AddSingle(0xFF45, new AddressAction_DirectValue<uint8_t>(this->_LYC), "LYC");
+		mainBus.AddDirectAccess(0xFF44, this->_LY, "LY");
+		mainBus.AddDirectAccess(0xFF45, this->_LYC, "LYC");
 
-		mainBus.AddSingle(0xFF42, new AddressAction_DirectValue<uint8_t>(this->_SCY), "SCY");
-		mainBus.AddSingle(0xFF43, new AddressAction_DirectValue<uint8_t>(this->_SCX), "SCX");
+		mainBus.AddDirectAccess(0xFF42, this->_SCY, "SCY");
+		mainBus.AddDirectAccess(0xFF43, this->_SCX, "SCX");
 
-		mainBus.AddSingle(0xFF4A, new AddressAction_DirectValue<uint8_t>(this->_WY), "WY");
-		mainBus.AddSingle(0xFF4B, new AddressAction_DirectValue<uint8_t>(this->_WX), "WX");
+		mainBus.AddDirectAccess(0xFF4A, this->_WY, "WY");
+		mainBus.AddDirectAccess(0xFF4B, this->_WX, "WX");
 
-		mainBus.AddSingle(0xFF47, new AddressAction_DirectValue<BGP>(this->_BGP), "BGP");
-		mainBus.AddSingle(0xFF48, new AddressAction_DirectValue<OBP>(this->_OBP0), "OBP0");
-		mainBus.AddSingle(0xFF49, new AddressAction_DirectValue<OBP>(this->_OBP1), "OBP1");
+		mainBus.AddDirectAccess(0xFF47, this->_BGP, "BGP");
+		mainBus.AddDirectAccess(0xFF48, this->_OBP0, "OBP0");
+		mainBus.AddDirectAccess(0xFF49, this->_OBP1, "OBP1");
 		_mainBus = &mainBus;
 	}
 
@@ -43,8 +43,7 @@ namespace P4Boy
 			, baseColors[_BGP.ColorIdx2]
 			, baseColors[_BGP.ColorIdx3]
 		};
-		static sf::VertexArray vertex(sf::PrimitiveType::Points, 144 * 160);
-		uint16_t vindex = 0;
+
 		if (_LCDC.BGWEnable_Priority)
 		{
 			for (uint8_t y = 0; y < 32; ++y)
@@ -72,9 +71,9 @@ namespace P4Boy
 							uint8_t color = ((pixels1 >> (7 - x_tile)) & 1) | (((pixels2 >> (7 - x_tile)) & 1) << 1);
 							int coordX = x * 8 + x_tile - _SCX;
 							int coordY = y * 8 + y_tile - _SCY;
-							if (!(coordX >= 0 && coordX <= 160 && coordY >= 0 && coordY <= 144))
+							if (!(coordX >= 0 && coordX < 160 && coordY >= 0 && coordY < 144))
 								continue;
-							vertex.append(sf::Vertex(sf::Vector2f(coordX, coordY), colors[color]));
+							_renderImg.setPixel(coordX, coordY, colors[color]);
 						}
 					}
 				}
@@ -85,8 +84,8 @@ namespace P4Boy
 		{
 			_LCDC.WindowEnable = _LCDC.WindowEnable.Get();
 		}
-		_window.draw(vertex);
-		vertex.resize(0);
+
+
 	}
 
 	void LCD::DrawSprites()
@@ -96,10 +95,14 @@ namespace P4Boy
 		uint16_t tile_data_addr = 0x8000;
 		uint16_t oam_addr = 0xFE00;
 
-		sf::Color colors[] = { {0x08, 0x18, 0x28}, {0x34, 0x68, 0x56}, {0x88, 0xC0, 0x70}, {0xE0, 0xF8, 0xD0} };
+		static const sf::Color baseColors[] = { {0xE0, 0xF8, 0xD0}, {0x88, 0xC0, 0x70}, {0x34, 0x68, 0x56}, {0x08, 0x18, 0x28} };
+		sf::Color colors[4] = {
+			baseColors[_BGP.ColorIdx0]
+			, baseColors[_BGP.ColorIdx1]
+			, baseColors[_BGP.ColorIdx2]
+			, baseColors[_BGP.ColorIdx3]
+		};
 		
-		static sf::VertexArray vertex(sf::PrimitiveType::Points, 144 * 160);
-		uint16_t vindex = 0;
 		for (uint8_t i = 0; i < 40; ++i)
 		{
 			uint16_t spriteAddr = oam_addr + i * 4;
@@ -120,16 +123,13 @@ namespace P4Boy
 					uint8_t color = ((pixels1 >> (7 - x_tile)) & 1) | (((pixels2 >> (7 - x_tile)) & 1) << 1);
 					int coordX = xPos + x_tile;
 					int coordY = yPos + y_tile;
-					if (coordX >= 0 && coordX <= 160 && coordY >= 0 && coordY <= 144)
+					if (coordX >= 0 && coordX < 160 && coordY >= 0 && coordY < 144)
 					{
-						vertex.append(sf::Vertex(sf::Vector2f(coordX, coordY), colors[color]));
+						_renderImg.setPixel(coordX, coordY, colors[color]);
 					}
 				}
 			}
 		}
-
-		_window.draw(vertex);
-		vertex.resize(0);
 	}
 	void LCD::Tick()
 	{
@@ -164,8 +164,13 @@ namespace P4Boy
 					_LCDS.VblankInterruptSource = 1;
 
 					_window.clear({ 0xE0, 0xF8, 0xD0 });
+					_renderImg.create(160, 144, { 0xE0, 0xF8, 0xD0 });
 					DrawBackground();
 					DrawSprites();
+					_renderTexture.loadFromImage(_renderImg);
+					_renderSprite.setTexture(_renderTexture);
+					_renderSprite.setPosition(sf::Vector2f(0, 0));
+					_window.draw(_renderSprite);
 					_window.display();
 					sf::Event event;
 					while (_window.pollEvent(event)) { }

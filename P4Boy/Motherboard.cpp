@@ -60,7 +60,7 @@ namespace P4Boy
 
 		// blargg's
 		static uint8_t v = 0;
-		mainBus.AddSingle(0xFF01, new AddressAction_DirectValue<uint8_t>(v), "Blargg's writer");
+		mainBus.AddDirectAccess(0xFF01, v, "Blargg's writer");
 		mainBus.AddSingle(0xFF02, new AddressAction_SingleAction(
 			[mainBus](Address addr, uint8_t value)
 			{
