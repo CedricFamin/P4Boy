@@ -3,13 +3,13 @@
 #include "imgui.h"
 
 
-ShowCPURegisters::ShowCPURegisters(P4Boy::CPU::shared_ptr cpu) : _cpu(cpu) {}
+ShowCPURegisters::ShowCPURegisters(P4Boy::CPU::shared_ptr cpu, P4Boy::Clock::shared_ptr clock) : _cpu(cpu), _clock(clock) {}
 
 void ShowCPURegisters::MenuToolBarUpdate()
 {
     if (ImGui::BeginMenu("CPU"))
     {
-        if (ImGui::MenuItem("Registers", nullptr, _show))
+        if (ImGui::MenuItem("CPU Info", nullptr, _show))
         {
             _show = !_show;
         }
@@ -48,6 +48,15 @@ namespace {
         ImGui::Text("%d", value);
         ImGui::TableNextRow();
     }
+
+    void ShowField(char const* fieldName, const float& value)
+    {
+        ImGui::TableNextColumn();
+        ImGui::Text(fieldName);
+        ImGui::TableNextColumn();
+        ImGui::Text("%2.2f", value);
+        ImGui::TableNextRow();
+    }
 }
 
 void ShowCPURegisters::WindowUpdate()
@@ -59,6 +68,11 @@ void ShowCPURegisters::WindowUpdate()
 
     if (ImGui::BeginTable("TableCPU", 2))
     {
+        ShowField("Frenquency (Mghz)", _clock->GetCurrentFequencyMhz());
+        ShowField("", "");
+
+        ShowField("Registers", "");
+
         ShowField("AF", _cpu->AF);
         ShowField("A", _cpu->AF.A);
         ShowField("F", _cpu->AF.F);

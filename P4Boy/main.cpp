@@ -23,15 +23,7 @@ void P4Boy_Loop(P4Boy::P4Boy & p4boy)
 
     while (true)
     {
-        ++tick;
         p4boy.Tick();
-        if (tick == 150000)
-        {
-            auto current_date = std::chrono::high_resolution_clock::now();
-            //std::cout << "Megahertz: " << (tick * 1000.0f / (std::chrono::duration_cast<std::chrono::nanoseconds>(current_date - on_date).count())) << '\n';
-            on_date = std::chrono::high_resolution_clock::now();
-            tick = 0;
-        }
     }
 }
 
@@ -58,7 +50,7 @@ int main()
     // Todo
     
     
-    //p4boy.LoadRom("Roms/Tetris.gb");
+    // p4boy.LoadRom("Roms/Tetris.gb");
     p4boy.LoadRom("Roms/links_awakening.gb");
     //p4boy.LoadRom("Roms/pokemon_yellow.gb");
     //p4boy.LoadRom("Roms/Mario's_Picross(FR).gb");
@@ -70,7 +62,7 @@ int main()
     ImGui::SFML::Init(window);
 
     sf::Clock deltaClock;
-    ShowCPURegisters showCPURegisters(p4boy.GetCPU());
+    ShowCPURegisters showCPURegisters(p4boy.GetCPU(), p4boy.GetClock());
     ShowMemory showMemory(p4boy.GetMainBus());
     ShowCartridge showCartridge(p4boy.GetCartridge());
 

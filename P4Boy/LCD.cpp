@@ -139,29 +139,45 @@ namespace P4Boy
 		if (nextTickUpdate == 0)
 		{
 			Register_Interrupt requestInterrupt = 0;
-			_LYC = _LY;
-			uint8_t currentMode = _LCDS.Mode;
-			if (currentMode == 2)
+			LCDMode currentMode = (LCDMode)_LCDS.Mode.Get();
+			if (currentMode == LCDMode::OAM_Scan)
 			{
-				if (_LY >= 153) _LY = 0;
-				else
+				_LCDS.Mode = LCDMode::Drawing_Pixels;
+			}
+			else if (currentMode == LCDMode::Drawing_Pixels)
+			{
+				_LCDS.LYCCheckFlag = (int)(_LY == _LYC);
+				if (_LY == _LYC && _LCDS.LYCCheckInterruptSource)
 				{
-					_LY += 1;
+					requestInterrupt.LCDStat = 1;
 				}
-				_LCDS.Mode = 3;
+				if (_LCDS.HblankInterruptSource)
+				{
+					requestInterrupt.LCDStat = 1;
+				}
+				_LCDS.Mode = LCDMode::Horizontal_Blank;
 			}
-			else if (currentMode == 3)
+			else if (currentMode == LCDMode::Horizontal_Blank)
 			{
-				_LCDS.Mode = 0;
-			}
-			else if (currentMode == 0)
-			{
+				_LY += 1;
 				if (_LY >= 144)
 				{
-					_LCDS.Mode = 1;
-
+					_LCDS.Mode = LCDMode::Vertical_Blank;
+					if (_LCDS.VblankInterruptSource)
+					{
+						requestInterrupt.LCDStat = 1;
+					}
 					requestInterrupt.VBlank = 1;
-					_LCDS.VblankInterruptSource = 1;
+				}
+				else _LCDS.Mode = LCDMode::OAM_Scan;
+			}
+			else if (currentMode == LCDMode::Vertical_Blank)
+			{
+				if (_LY >= 153)
+				{
+					_LCDS.Mode = LCDMode::OAM_Scan;
+					_LCDS.VblankInterruptSource = 0;
+					_LY = 0;
 
 					_window.clear({ 0xE0, 0xF8, 0xD0 });
 					_renderImg.create(160, 144, { 0xE0, 0xF8, 0xD0 });
@@ -173,24 +189,13 @@ namespace P4Boy
 					_window.draw(_renderSprite);
 					_window.display();
 					sf::Event event;
-					while (_window.pollEvent(event)) { }
-				}
-				else _LCDS.Mode = 2;
-
-
-			}
-			else if (currentMode == 1)
-			{
-				if (_LY >= 153)
-				{
-					_LCDS.Mode = 2;
-					_LCDS.VblankInterruptSource = 0;
+					while (_window.pollEvent(event)) {}
 				}
 				
 				_LY += 1;
 			}
 
-			nextTickUpdate = MODE_TIMING[currentMode] / 2;
+			nextTickUpdate = MODE_TIMING[currentMode];
 			if (requestInterrupt > 0) Register_Interrupt::MergeRequestInterrupt(*_mainBus, requestInterrupt);
 		}
 		else

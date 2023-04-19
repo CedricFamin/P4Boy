@@ -124,6 +124,14 @@ namespace P4Boy
 		typedef Ptr<LCD> ptr;
 		typedef std::shared_ptr<LCD> shared_ptr;
 
+		enum LCDMode
+		{
+			OAM_Scan = 2
+			, Drawing_Pixels = 3
+			, Horizontal_Blank = 0
+			, Vertical_Blank = 1
+		};
+
 		LCD();
 	public:
 
