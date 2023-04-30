@@ -31,6 +31,21 @@ namespace P4Boy
 		_mainBus = &mainBus;
 	}
 
+	void LCD::Reset()
+	{
+		_LCDC = 0;
+		_LCDS = 0;
+		_SCY = 0;
+		_SCX = 0;
+		_LY = 0;
+		_LYC = 0;
+		_WY = 0;
+		_WX = 0;
+		_BGP = 0;
+		_OBP0 = 0;
+		_OBP1 = 0;
+	}
+
 	void LCD::DrawBackground()
 	{
 		uint16_t tile_data_addr = _LCDC.BGWTileDataArea ? 0x8000: 0x8800;

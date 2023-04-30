@@ -50,6 +50,8 @@ namespace P4Boy
 		Timer();
 		void ConnectRange(MainBus& mainBus);
 		void Tick();
+
+		void Reset();
 	protected:
 	private:
 		uint16_t		_tick = 0;

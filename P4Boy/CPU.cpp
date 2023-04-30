@@ -189,4 +189,21 @@ namespace P4Boy
 			}
 		}
 	}
+
+	void CPU::Reset()
+	{
+		AF = 0;
+		BC = 0;
+		DE = 0;
+		HL = 0;
+		SP = 0;
+		PC = 0;
+
+		InterruptMasterEnable = false;
+		InterruptEnableRegister = 0;
+		InterruptRequestRegister = 0;
+		halted = false;
+		_interruptQueued = false;
+		_nextInstructionCycle = 0;
+	}
 }

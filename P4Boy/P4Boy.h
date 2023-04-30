@@ -20,6 +20,7 @@ namespace P4Boy
 		P4Boy();
 		void Tick();
 		void LoadRom(char const* romPath);
+		void Reset();
 
 		Clock::shared_ptr		GetClock() { return _clock; }
 		Motherboard::shared_ptr GetMotherboard() { return _motherboard; }

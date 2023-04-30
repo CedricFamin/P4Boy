@@ -137,6 +137,7 @@ namespace P4Boy
 
 		void Tick();
 		void ConnectAddressRange(MainBus& mainBus);
+		void Reset();
 
 
 	protected:

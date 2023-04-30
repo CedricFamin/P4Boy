@@ -40,4 +40,12 @@ namespace P4Boy
     {
         _tickDuration = duration;
     }
+
+    void Clock::Reset()
+    {
+        _nextClockTick = std::chrono::high_resolution_clock::now() + _tickDuration.load();
+        _computeFrequencyStart = std::chrono::high_resolution_clock::now();
+        _frequency = .0f;
+        _tick = 0;
+    }
 }

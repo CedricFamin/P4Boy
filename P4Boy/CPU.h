@@ -121,6 +121,8 @@ namespace P4Boy
 		inline MainBus& Memory() { return *_mainBus; }
 
 		std::atomic_bool debugShowInstructions;
+
+		void Reset();
 	protected:
 	private:
 		bool _interruptQueued = false;

@@ -24,6 +24,7 @@ void P4Boy_Loop(P4Boy::P4Boy & p4boy)
     while (true)
     {
         p4boy.Tick();
+        ++tick;
     }
 }
 
@@ -92,6 +93,10 @@ int main()
             if (ImGui::BeginMenu("P4Boy"))
             {
                 ImGui::MenuItem("Load ROM");
+                if (ImGui::MenuItem("Reset"))
+                {
+                    p4boy.Reset();
+                }
                 ImGui::EndMenu();
             }
 

@@ -39,5 +39,14 @@ namespace P4Boy
 	{
 		_cartridge->LoadRom(romPath);
 		_cartridge->ConnectAddressRange(_bootRom, _motherboard->GetMainBus());
+		Reset();
+	}
+
+	void P4Boy::Reset()
+	{
+		_clock->Reset();
+		_cpu->Reset();
+		_timer->Reset();
+		_lcd->Reset();
 	}
 }

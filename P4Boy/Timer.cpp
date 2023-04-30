@@ -9,6 +9,7 @@ namespace P4Boy
 	{
 
 	}
+
 	void Timer::ConnectRange(MainBus& mainBus)
 	{
 		_mainBus = &mainBus;
@@ -18,6 +19,7 @@ namespace P4Boy
 		mainBus.AddDirectAccess(0xFF06, _modulo, "Timer - Modula");
 		mainBus.AddDirectAccess(0xFF07, _tac, "Timer - TAC");
 	}
+
 	void Timer::Tick()
 	{
 		_div = _div + 1;
@@ -41,5 +43,15 @@ namespace P4Boy
 			}
 		}
 		
+	}
+
+	void Timer::Reset()
+	{
+
+		_tick = 0;
+		_div = 0;
+		_modulo = 0;
+		_tima = 0;
+		_tac;
 	}
 }
