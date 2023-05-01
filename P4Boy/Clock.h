@@ -19,6 +19,7 @@ namespace P4Boy
         void Wait();
         float GetCurrentFequencyMhz() const;
         void SetTickDuration(std::chrono::nanoseconds duration);
+        std::chrono::nanoseconds GetTickDuration() const { return _tickDuration; }
 
         void Reset();
     protected:

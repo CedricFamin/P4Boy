@@ -171,6 +171,9 @@
     <ClCompile Include="CartridgeDebug.cpp">
       <Filter>Fichiers sources\Debug</Filter>
     </ClCompile>
+    <ClCompile Include="ClockDebug.cpp">
+      <Filter>Fichiers sources\Debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Clock.h">
@@ -531,6 +534,9 @@
       <Filter>Fichiers d%27en-tête\Core\MBC</Filter>
     </ClInclude>
     <ClInclude Include="CartridgeDebug.h">
+      <Filter>Fichiers d%27en-tête\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="ClockDebug.h">
       <Filter>Fichiers d%27en-tête\Debug</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,7 +3,7 @@
 #include "imgui.h"
 
 
-ShowCPURegisters::ShowCPURegisters(P4Boy::CPU::shared_ptr cpu, P4Boy::Clock::shared_ptr clock) : _cpu(cpu), _clock(clock) {}
+ShowCPURegisters::ShowCPURegisters(P4Boy::CPU::shared_ptr cpu) : _cpu(cpu) {}
 
 void ShowCPURegisters::MenuToolBarUpdate()
 {
@@ -68,9 +68,6 @@ void ShowCPURegisters::WindowUpdate()
 
     if (ImGui::BeginTable("TableCPU", 2))
     {
-        ShowField("Frenquency (Mghz)", _clock->GetCurrentFequencyMhz());
-        ShowField("", "");
-
         ShowField("Registers", "");
 
         ShowField("AF", _cpu->AF);
@@ -82,6 +79,8 @@ void ShowCPURegisters::WindowUpdate()
         ShowField("DE", _cpu->DE);
         ShowField("D", _cpu->DE.D);
         ShowField("E", _cpu->DE.E);
+        ShowField("PC", _cpu->PC);
+        ShowField("SP", _cpu->SP);
         ImGui::EndTable();
     }
 }

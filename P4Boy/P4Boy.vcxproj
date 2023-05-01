@@ -139,6 +139,7 @@
     <ClCompile Include="Cartridge.cpp" />
     <ClCompile Include="CartridgeDebug.cpp" />
     <ClCompile Include="Clock.cpp" />
+    <ClCompile Include="ClockDebug.cpp" />
     <ClCompile Include="ControlFlow.cpp" />
     <ClCompile Include="CPU.cpp" />
     <ClCompile Include="CPUDebug.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="Cartridge.h" />
     <ClInclude Include="CartridgeDebug.h" />
     <ClInclude Include="Clock.h" />
+    <ClInclude Include="ClockDebug.h" />
     <ClInclude Include="CPU.h" />
     <ClInclude Include="CPUDebug.h" />
     <ClInclude Include="CPUIntructionManager.h" />

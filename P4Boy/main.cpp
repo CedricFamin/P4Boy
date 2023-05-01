@@ -15,6 +15,7 @@
 #include "MemoryDebug.h"
 #include "CPUDebug.h"
 #include "CartridgeDebug.h"
+#include "ClockDebug.h"
 
 void P4Boy_Loop(P4Boy::P4Boy & p4boy)
 {
@@ -51,8 +52,8 @@ int main()
     // Todo
     
     
-    // p4boy.LoadRom("Roms/Tetris.gb");
-    p4boy.LoadRom("Roms/links_awakening.gb");
+    p4boy.LoadRom("Roms/Tetris.gb");
+    //p4boy.LoadRom("Roms/links_awakening.gb");
     //p4boy.LoadRom("Roms/pokemon_yellow.gb");
     //p4boy.LoadRom("Roms/Mario's_Picross(FR).gb");
     
@@ -63,9 +64,10 @@ int main()
     ImGui::SFML::Init(window);
 
     sf::Clock deltaClock;
-    ShowCPURegisters showCPURegisters(p4boy.GetCPU(), p4boy.GetClock());
+    ShowCPURegisters showCPURegisters(p4boy.GetCPU());
     ShowMemory showMemory(p4boy.GetMainBus());
     ShowCartridge showCartridge(p4boy.GetCartridge());
+    ClockDebug showClock(p4boy.GetClock());
 
     bool showDemo = false;
     while (window.isOpen()) {
@@ -100,6 +102,7 @@ int main()
                 ImGui::EndMenu();
             }
 
+            showClock.MenuToolBarUpdate();
             showCPURegisters.MenuToolBarUpdate();
             showMemory.MenuToolBarUpdate();
             showCartridge.MenuToolBarUpdate();
@@ -114,6 +117,7 @@ int main()
         }
         
         if (showDemo) ImGui::ShowDemoWindow();
+        showClock.WindowUpdate();
         showCPURegisters.WindowUpdate();
         showMemory.WindowUpdate();
         showCartridge.WindowUpdate();
