@@ -9,7 +9,7 @@ namespace P4Boy
 	{
 		public:
 			typedef _valueType valueType;
-			inline operator valueType() { return Get(); }
+			inline operator valueType() const { return Get(); }
 			valueType Get() const { return reinterpret_cast<_registerType const*>(this)->Get(); }
 	};
 

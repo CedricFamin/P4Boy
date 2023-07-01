@@ -152,6 +152,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="Joypad.cpp" />
     <ClCompile Include="LCD.cpp" />
+    <ClCompile Include="LCDDebug.cpp" />
     <ClCompile Include="Load.cpp" />
     <ClCompile Include="MainBus.cpp" />
     <ClCompile Include="Maths.cpp" />
@@ -275,6 +276,7 @@
     <ClInclude Include="include\SFML\Window\WindowStyle.hpp" />
     <ClInclude Include="Joypad.h" />
     <ClInclude Include="LCD.h" />
+    <ClInclude Include="LCDDebug.h" />
     <ClInclude Include="MainBus.h" />
     <ClInclude Include="MBC.h" />
     <ClInclude Include="MemoryDebug.h" />

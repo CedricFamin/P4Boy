@@ -55,7 +55,7 @@ namespace P4Boy
 			return romSizes[romSize];
 		}
 
-		MBCInterface* CreateMBC(uint8_t mbcNumber, Cartridge& cartridge, Rom& bootRom)
+		MBCInterface* MBCBuilder(uint8_t mbcNumber, Cartridge& cartridge, Rom& bootRom)
 		{
 			switch (mbcNumber) {
 			case 0: //No MBC
@@ -135,9 +135,13 @@ namespace P4Boy
 		if (_ramBankNb >= 1) _ram.resize(_ramBankNb * BANK_RAM_SIZE);
 	}
 
-	void Cartridge::ConnectAddressRange(Rom::shared_ptr& bootRom, MainBus& mainBus)
+	void Cartridge::CreateMBC(Rom::shared_ptr& bootRom)
 	{
-		_mbc = CreateMBC(_cartridgeType, *this, *bootRom.get());
+		_mbc = MBCBuilder(_cartridgeType, *this, *bootRom.get());
+	}
+
+	void Cartridge::ConnectAddressRange(MainBus& mainBus)
+	{
 		auto bootRomEnabler = new AddressAction_SingleAction(
 			[this](Address addr, uint8_t value) 
 			{ 
@@ -163,5 +167,10 @@ namespace P4Boy
 	void Cartridge::WriteRam(Address addr, uint8_t data)
 	{
 		_ram[addr] = data;
+	}
+
+	void Cartridge::Reset()
+	{
+		_mbc->Reset();
 	}
 }

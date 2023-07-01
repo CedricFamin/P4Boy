@@ -23,27 +23,32 @@ namespace P4Boy
 		_lcd->ConnectAddressRange(_motherboard->GetMainBus());
 		_joypad->ConnectAddressRange(_motherboard->GetMainBus());
 		_timer->ConnectRange(_motherboard->GetMainBus());
+		_cartridge->ConnectAddressRange(_motherboard->GetMainBus());
 	}
 	
 	void P4Boy::Tick()
 	{
-		_joypad->Tick();
-		_lcd->Tick();
-		_cpu->Tick();
-		_motherboard->Tick();
-		_timer->Tick();
-		_clock->Wait();
+		if (!_paused)
+		{
+			_joypad->Tick();
+			_lcd->Tick();
+			_cpu->Tick();
+			_motherboard->Tick();
+			_timer->Tick();
+			_clock->Wait();
+		}
 	}
 
 	void P4Boy::LoadRom(char const * romPath)
 	{
 		_cartridge->LoadRom(romPath);
-		_cartridge->ConnectAddressRange(_bootRom, _motherboard->GetMainBus());
+		_cartridge->CreateMBC(_bootRom);
 		Reset();
 	}
 
 	void P4Boy::Reset()
 	{
+		_cartridge->Reset();
 		_clock->Reset();
 		_cpu->Reset();
 		_timer->Reset();

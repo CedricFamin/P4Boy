@@ -2,6 +2,7 @@
 
 #include "Utility.h"
 #include "Register.h"
+#include "MainBus.h"
 
 #include "SFML/Graphics.hpp"
 
@@ -118,6 +119,23 @@ namespace P4Boy
 		inline OBP& operator=(uint8_t value) { _value = value; return *this; }
 	};
 
+
+	template<uint8_t _size_y>
+	struct Tile
+	{
+		static const uint8_t size_y = _size_y;
+		static const uint8_t nbPixelsPacked = 2 * size_y;
+
+		uint8_t pixels[nbPixelsPacked];
+
+		uint8_t UnpackGetColor(uint8_t x, uint8_t y) const
+		{
+			uint8_t pixel1 = pixels[y * 2];
+			uint8_t pixel2 = pixels[y * 2 + 1];
+			return ((pixel1 >> (7 - x)) & 1) | (((pixel2 >> (7 - x)) & 1) << 1);
+		}
+	};
+
 	class LCD
 	{
 	public:
@@ -139,6 +157,24 @@ namespace P4Boy
 		void ConnectAddressRange(MainBus& mainBus);
 		void Reset();
 
+		uint16_t GetTileDataAddress() const;
+		uint16_t GetTileMapAddress() const;
+		uint16_t GetTileAddress(uint16_t const& tileMapAddr, uint16_t const& tileDataAddr, uint8_t const& x, uint8_t const& y) const;
+
+		template<uint8_t _size_y>
+		void GetTilePixels(uint16_t const& tileAddress, Tile<_size_y>& tile) const
+		{
+			for (uint8_t pixelIdx = 0; pixelIdx < Tile<_size_y>::nbPixelsPacked; ++pixelIdx)
+			{
+				tile.pixels[pixelIdx] = _mainBus->Get_8b(tileAddress + pixelIdx);
+			}
+		}
+
+		int GetColors(uint8_t colorIdx) const
+		{
+			static const int baseColors[] = { {0xE0F8D0}, {0x88C070}, {0x346856}, {0x081828} };
+			return baseColors[colorIdx];
+		}
 
 	protected:
 	private:

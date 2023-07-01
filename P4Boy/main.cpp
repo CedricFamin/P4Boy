@@ -16,6 +16,55 @@
 #include "CPUDebug.h"
 #include "CartridgeDebug.h"
 #include "ClockDebug.h"
+#include "LCDDebug.h"
+
+#include <windows.h>
+#include <shobjidl.h> 
+
+std::string OpenFile()
+{
+    std::string filePath = "";
+    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED |
+        COINIT_DISABLE_OLE1DDE);
+    if (SUCCEEDED(hr))
+    {
+        IFileOpenDialog* pFileOpen;
+
+        // Create the FileOpenDialog object.
+        hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL,
+            IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+
+        if (SUCCEEDED(hr))
+        {
+            // Show the Open dialog box.
+            hr = pFileOpen->Show(NULL);
+
+            // Get the file name from the dialog box.
+            if (SUCCEEDED(hr))
+            {
+                IShellItem* pItem;
+                hr = pFileOpen->GetResult(&pItem);
+                if (SUCCEEDED(hr))
+                {
+                    PWSTR pszFilePath;
+                    hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+                    // Display the file name to the user.
+                    if (SUCCEEDED(hr))
+                    {
+                        std::wstring wfilePath = pszFilePath;
+                        filePath = std::string(wfilePath.begin(), wfilePath.end()); // not sure about this but it works :)
+                        CoTaskMemFree(pszFilePath);
+                    }
+                    pItem->Release();
+                }
+            }
+            pFileOpen->Release();
+        }
+        CoUninitialize();
+    }
+    return filePath;
+}
 
 void P4Boy_Loop(P4Boy::P4Boy & p4boy)
 {
@@ -52,8 +101,8 @@ int main()
     // Todo
     
     
-    p4boy.LoadRom("Roms/Tetris.gb");
-    //p4boy.LoadRom("Roms/links_awakening.gb");
+    //p4boy.LoadRom("Roms/Tetris.gb");
+    p4boy.LoadRom("Roms/links_awakening.gb");
     //p4boy.LoadRom("Roms/pokemon_yellow.gb");
     //p4boy.LoadRom("Roms/Mario's_Picross(FR).gb");
     
@@ -68,6 +117,7 @@ int main()
     ShowMemory showMemory(p4boy.GetMainBus());
     ShowCartridge showCartridge(p4boy.GetCartridge());
     ClockDebug showClock(p4boy.GetClock());
+    LCDDebug showLCD(p4boy.GetLCD());
 
     bool showDemo = false;
     while (window.isOpen()) {
@@ -94,10 +144,21 @@ int main()
         {
             if (ImGui::BeginMenu("P4Boy"))
             {
-                ImGui::MenuItem("Load ROM");
+                if (ImGui::MenuItem("Load ROM"))
+                {
+                    std::string fileToOpen = OpenFile();
+                    if (fileToOpen != "")
+                    {
+                        p4boy.Stop();
+                        p4boy.LoadRom(fileToOpen.c_str());
+                        p4boy.Resume();
+                    }
+                }
                 if (ImGui::MenuItem("Reset"))
                 {
+                    p4boy.Stop();
                     p4boy.Reset();
+                    p4boy.Resume();
                 }
                 ImGui::EndMenu();
             }
@@ -106,6 +167,7 @@ int main()
             showCPURegisters.MenuToolBarUpdate();
             showMemory.MenuToolBarUpdate();
             showCartridge.MenuToolBarUpdate();
+            showLCD.MenuToolBarUpdate();
 
             if (ImGui::BeginMenu("Demo"))
             {
@@ -121,6 +183,7 @@ int main()
         showCPURegisters.WindowUpdate();
         showMemory.WindowUpdate();
         showCartridge.WindowUpdate();
+        showLCD.WindowUpdate();
 
         ImGui::End();
         

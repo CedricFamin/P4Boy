@@ -18,6 +18,11 @@ namespace P4Boy
                 bootRomEnabled = enable; 
         }
 
+        void Reset()
+        {
+            bootRomEnabled = true;
+        }
+
         virtual uint8_t GetCurrentRomBank() const { return 0; }
         virtual uint8_t GetCurrentRamBank() const { return 0; }
     protected:

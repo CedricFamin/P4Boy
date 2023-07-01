@@ -55,7 +55,9 @@ namespace P4Boy
 		Cartridge() {}
 
 		void LoadRom(char const* romPath);
-		void ConnectAddressRange(Rom::shared_ptr& bootRom, MainBus& mainBus);
+		void ConnectAddressRange(MainBus& mainBus);
+		void CreateMBC(Rom::shared_ptr& bootRom);
+		void Reset();
 
 		uint8_t ReadRom(Address addr) const { return _rom.Read(addr); }
 		uint8_t ReadRam(Address addr) const;

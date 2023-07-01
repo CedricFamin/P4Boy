@@ -46,10 +46,39 @@ namespace P4Boy
 		_OBP1 = 0;
 	}
 
+	uint16_t LCD::GetTileDataAddress() const
+	{
+		return _LCDC.BGWTileDataArea ? 0x8000 : 0x8800;
+	}
+	uint16_t LCD::GetTileMapAddress() const
+	{
+		return _LCDC.BGWTileMapArea ? 0x9C00 : 0x9800;
+	}
+	
+	uint16_t LCD::GetTileAddress(uint16_t const& tileMapAddr, uint16_t const& tileDataAddr, uint8_t const& x, uint8_t const& y) const
+	{
+		uint16_t address = 0;
+
+		uint8_t tileIndex = _mainBus->Get_8b(tileMapAddr + x + y * 32);
+		if (!tileIndex)
+			return 0;
+		address = tileDataAddr + tileIndex * 16;
+		if (_LCDC.BGWTileDataArea == 0)
+		{
+			address = tileDataAddr + (tileIndex - 128) * 16;
+			if (tileIndex <= 127)
+			{
+				address = tileDataAddr + (tileIndex + 128) * 16;
+			}
+		}
+
+		return address;
+	}
+
 	void LCD::DrawBackground()
 	{
-		uint16_t tile_data_addr = _LCDC.BGWTileDataArea ? 0x8000: 0x8800;
-		uint16_t time_map_addr = _LCDC.BGWTileMapArea ? 0x9C00 : 0x9800;
+		uint16_t tile_data_addr = GetTileDataAddress();
+		uint16_t tile_map_addr = GetTileMapAddress();
 
 		static const sf::Color baseColors[] = { {0xE0, 0xF8, 0xD0}, {0x88, 0xC0, 0x70}, {0x34, 0x68, 0x56}, {0x08, 0x18, 0x28} };
 		sf::Color colors[4] = {
@@ -59,35 +88,28 @@ namespace P4Boy
 			, baseColors[_BGP.ColorIdx3]
 		};
 
+		Tile<8> tile;
+
 		if (_LCDC.BGWEnable_Priority)
 		{
 			for (uint8_t y = 0; y < 32; ++y)
 			{
 				for (uint8_t x = 0; x < 32; ++x)
 				{
-					uint8_t tileIndex = _mainBus->Get_8b(time_map_addr + x + y * 32);
-					if (!tileIndex)
+					uint16_t tileAddress = GetTileAddress(tile_map_addr, tile_data_addr, x, y);
+					if (tileAddress == 0)
 						continue;
-					uint16_t tileAddr = tile_data_addr + tileIndex * 16;
-					if (_LCDC.BGWTileDataArea == 0)
-					{
-						tileAddr = tile_data_addr + (tileIndex - 128) * 16;
-						if (tileIndex <= 127)
-						{
-							tileAddr = tile_data_addr + (tileIndex + 128) * 16;
-						}
-					}
+					GetTilePixels(tileAddress, tile);
+
 					for (uint8_t y_tile = 0; y_tile < 8; ++y_tile)
 					{
-						uint8_t pixels1 = _mainBus->Get_8b(tileAddr + (y_tile * 2));
-						uint8_t pixels2 = _mainBus->Get_8b(tileAddr + (y_tile * 2 + 1));
+						int coordY = y * 8 + y_tile - _SCY;
 						for (uint8_t x_tile = 0; x_tile <= 8; ++x_tile)
 						{
-							uint8_t color = ((pixels1 >> (7 - x_tile)) & 1) | (((pixels2 >> (7 - x_tile)) & 1) << 1);
 							int coordX = x * 8 + x_tile - _SCX;
-							int coordY = y * 8 + y_tile - _SCY;
 							if (!(coordX >= 0 && coordX < 160 && coordY >= 0 && coordY < 144))
 								continue;
+							uint8_t color = tile.UnpackGetColor(x_tile, y_tile);
 							_renderImg.setPixel(coordX, coordY, colors[color]);
 						}
 					}
@@ -99,8 +121,6 @@ namespace P4Boy
 		{
 			_LCDC.WindowEnable = _LCDC.WindowEnable.Get();
 		}
-
-
 	}
 
 	void LCD::DrawSprites()

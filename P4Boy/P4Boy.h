@@ -22,6 +22,9 @@ namespace P4Boy
 		void LoadRom(char const* romPath);
 		void Reset();
 
+		void Stop() { _paused = true; }
+		void Resume() { _paused = false; }
+
 		Clock::shared_ptr		GetClock() { return _clock; }
 		Motherboard::shared_ptr GetMotherboard() { return _motherboard; }
 		Cartridge::shared_ptr	GetCartridge() { return _cartridge; }
@@ -34,6 +37,8 @@ namespace P4Boy
 		MainBus&				GetMainBus() { return _motherboard->GetMainBus(); }
 	protected:
 	private:
+		bool					_paused = false;
+
 		Clock::shared_ptr		_clock;
 		Motherboard::shared_ptr	_motherboard;
 		Cartridge::shared_ptr	_cartridge;
